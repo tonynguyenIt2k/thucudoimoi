@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#1a1f36" />
+  <meta name="description" content="Hệ thống quản lý nhập máy điện thoại chuyên nghiệp - Mobile Shop" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>📱 Nhập Máy Pro - Mobile Shop</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <!-- App CSS -->
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div id="login-screen" class="screen" style="display:none;">
+  <div class="login-bg">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-icon">📱</div>
+        <h1>MOBILE SHOP</h1>
+        <p>Hệ Thống Quản Lý Nhập Máy</p>
+      </div>
+      <form id="login-form" autocomplete="on">
+        <div class="input-group-custom">
+          <i class="bi bi-person-fill"></i>
+          <input type="text" id="login-username" placeholder="Tên đăng nhập" autocomplete="username" />
+        </div>
+        <div class="input-group-custom">
+          <i class="bi bi-lock-fill"></i>
+          <input type="password" id="login-password" placeholder="Mật khẩu" autocomplete="current-password" />
+        </div>
+        <div id="login-error" class="login-error" style="display:none;"></div>
+        <button type="submit" class="btn-login" id="btn-login">
+          <span>Đăng Nhập</span>
+          <i class="bi bi-arrow-right-circle-fill"></i>
+        </button>
+      </form>
+      <div class="login-hint">
+        <small>admin / admin123 &nbsp;|&nbsp; nv1 / 123456</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP (shown after login)
+     ============================================================ -->
+<div id="app-screen" class="screen" style="display:none;">
+
+  <!-- TOP HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="header-logo"><i class="bi bi-phone-fill" style="color: #4f75ff; font-size: 1.5rem;"></i></span>
+      <span class="header-title">MOBILE SHOP</span>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" id="btn-theme-toggle" title="Giao diện sáng/tối">
+        <i class="bi bi-moon-stars-fill"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="app-nav">
+    <button class="nav-item active" data-tab="intake" id="nav-intake">
+      <i class="bi bi-plus-circle-fill"></i>
+      <span>Nhập Máy</span>
+    </button>
+    <button class="nav-item" data-tab="history" id="nav-history">
+      <i class="bi bi-clock-history"></i>
+      <span>Lịch Sử</span>
+    </button>
+    <button class="nav-item" data-tab="dashboard" id="nav-dashboard">
+      <i class="bi bi-bar-chart-fill"></i>
+      <span>Thống Kê</span>
+    </button>
+    <button class="nav-item admin-only" data-tab="settings" id="nav-settings">
+      <i class="bi bi-gear-fill"></i>
+      <span>Quản Lý</span>
+    </button>
+    <button class="nav-item" id="nav-profile">
+      <i class="bi bi-person-circle"></i>
+      <span>Tài Khoản</span>
+    </button>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="app-content">
+
+    <!-- ========== TAB: NHẬP MÁY ========== -->
+    <div class="tab-pane active" id="tab-intake">
+
+      <!-- Step Progress -->
+      <div class="step-progress">
+        <div class="step active" id="sp1">
+          <div class="step-dot"><i class="bi bi-person-fill"></i></div>
+          <span>Thông tin</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="sp2">
+          <div class="step-dot"><i class="bi bi-currency-dollar"></i></div>
+          <span>Giá tham chiếu</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="sp3">
+          <div class="step-dot"><i class="bi bi-check2-circle"></i></div>
+          <span>Tình trạng</span>
+        </div>
+      </div>
+
+      <!-- STEP 1: THÔNG TIN -->
+      <div class="step-content" id="step-1">
+        <div class="section-card">
+          <div class="section-header">
+            <i class="bi bi-person-vcard-fill"></i>
+            <h2>Thông Tin Khách Hàng</h2>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Tên khách <span class="required">*</span></label>
+              <div class="field-input-wrap">
+                <i class="bi bi-person"></i>
+                <input type="text" id="customer-name" placeholder="Nguyễn Văn A" autocomplete="off" />
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Số điện thoại <span class="required">*</span></label>
+              <div class="field-input-wrap">
+                <i class="bi bi-telephone"></i>
+                <input type="tel" id="customer-phone" placeholder="0901234567" inputmode="numeric" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Nhân viên tiếp nhận</label>
+            <div class="field-input-wrap readonly">
+              <i class="bi bi-person-badge"></i>
+              <input type="text" id="staff-display" readonly />
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <i class="bi bi-phone-fill"></i>
+            <h2>Thiết Bị</h2>
+          </div>
+
+          <!-- Device Type Selector -->
+          <div class="form-field">
+            <label>Loại thiết bị <span class="required">*</span></label>
+            <div class="device-type-grid" id="device-type-grid">
+              <button class="device-btn active" data-type="iPhone">
+                <span class="device-icon"><i class="bi bi-apple"></i></span>
+                <span>iPhone</span>
+              </button>
+              <button class="device-btn" data-type="Android">
+                <span class="device-icon"><i class="bi bi-android2"></i></span>
+                <span>Android</span>
+              </button>
+              <button class="device-btn" data-type="MacBook">
+                <span class="device-icon"><i class="bi bi-laptop"></i></span>
+                <span>MacBook</span>
+              </button>
+              <button class="device-btn" data-type="iPad">
+                <span class="device-icon"><i class="bi bi-tablet"></i></span>
+                <span>iPad</span>
+              </button>
+              <button class="device-btn" data-type="Watch">
+                <span class="device-icon"><i class="bi bi-smartwatch"></i></span>
+                <span>Watch</span>
+              </button>
+              <button class="device-btn" data-type="AirPods">
+                <span class="device-icon"><i class="bi bi-earbuds"></i></span>
+                <span>AirPods</span>
+              </button>
+              <button class="device-btn" data-type="Mac mini">
+                <span class="device-icon"><i class="bi bi-pc-display"></i></span>
+                <span>Mac mini</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Model Autocomplete -->
+          <div class="form-field" style="position:relative;">
+            <label>Model <span class="required">*</span></label>
+            <div class="field-input-wrap">
+              <i class="bi bi-search"></i>
+              <input type="text" id="model-input" placeholder="Nhập model... (VD: iPhone 15 Pro Max)" autocomplete="off" />
+              <button class="field-clear-btn" id="clear-model" style="display:none;">
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+            <!-- Autocomplete dropdown -->
+            <div class="autocomplete-dropdown" id="autocomplete-list" style="display:none;"></div>
+          </div>
+
+          <!-- Quick Model Suggestions -->
+          <div id="quick-models" class="quick-model-chips">
+            <!-- Will be populated by JS based on device type -->
+          </div>
+        </div>
+
+        <button class="btn-next" id="btn-step1-next">
+          <span>Tiếp Theo</span>
+          <i class="bi bi-arrow-right-circle-fill"></i>
+        </button>
+      </div>
+
+      <!-- STEP 2: AUTO GIÁ -->
+      <div class="step-content" id="step-2" style="display:none;">
+        <div class="section-card">
+          <div class="section-header">
+            <i class="bi bi-currency-dollar"></i>
+            <h2>Giá Tham Chiếu</h2>
+          </div>
+
+          <!-- Model selected display -->
+          <div class="selected-device-banner">
+            <span id="s2-device-icon">🍎</span>
+            <div>
+              <div class="selected-model-name" id="s2-model-name">iPhone 15 Pro Max</div>
+              <div class="selected-device-type" id="s2-device-type">iPhone</div>
+            </div>
+            <button class="btn-change-model" id="btn-back-step1">
+              <i class="bi bi-pencil"></i> Đổi
+            </button>
+          </div>
+
+          <!-- Price loading state -->
+          <div id="price-loading" class="price-loading">
+            <div class="spinner"></div>
+            <span>Đang lấy giá từ Điện Thoại Vui...</span>
+          </div>
+
+          <!-- Price error / manual -->
+          <div id="price-error-block" style="display:none;">
+            <div class="price-error-banner">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              <span id="price-error-msg">Không lấy được giá tự động</span>
+            </div>
+            <div class="manual-price-hint">Nhập giá thủ công bên dưới ↓</div>
+          </div>
+
+          <!-- Price cards -->
+          <div id="price-cards" style="display:none;">
+            <div class="price-source-badge">
+              <i class="bi bi-shield-check-fill"></i>
+              Giá từ <strong>Điện Thoại Vui</strong>
+              <span class="price-model-found" id="price-model-found"></span>
+            </div>
+            <div class="price-grid">
+              <div class="price-card" id="pc-pin">
+                <div class="price-card-label"><i class="bi bi-battery-charging"></i> Thay Pin</div>
+                <div class="price-card-value" id="pv-pin">—</div>
+                <div class="price-card-name" id="pn-pin" style="display:none;"></div>
+              </div>
+              <div class="price-card" id="pc-man">
+                <div class="price-card-label"><i class="bi bi-phone"></i> Thay Màn</div>
+                <div class="price-card-value" id="pv-man">—</div>
+                <div class="price-card-name" id="pn-man" style="display:none;"></div>
+              </div>
+              <div class="price-card" id="pc-camera">
+                <div class="price-card-label"><i class="bi bi-camera"></i> Thay Camera</div>
+                <div class="price-card-value" id="pv-camera">—</div>
+                <div class="price-card-name" id="pn-camera" style="display:none;"></div>
+              </div>
+              <div class="price-card" id="pc-vo">
+                <div class="price-card-label"><i class="bi bi-phone-flip"></i> Thay Vỏ</div>
+                <div class="price-card-value" id="pv-vo">—</div>
+                <div class="price-card-name" id="pn-vo" style="display:none;"></div>
+              </div>
+              <div class="price-card" id="pc-sac">
+                <div class="price-card-label"><i class="bi bi-plug"></i> Thay Sạc</div>
+                <div class="price-card-value" id="pv-sac">—</div>
+                <div class="price-card-name" id="pn-sac" style="display:none;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manual price override -->
+          <div class="manual-prices-section">
+            <div class="manual-toggle-row">
+              <label>Nhập giá thủ công (nếu cần)</label>
+              <button class="btn-toggle-manual" id="btn-toggle-manual">
+                <i class="bi bi-chevron-down"></i>
+              </button>
+            </div>
+            <div id="manual-prices-form" style="display:none;">
+              <div class="manual-price-grid">
+                <div class="manual-price-field">
+                  <label>Pin</label>
+                  <input type="text" id="mp-pin" placeholder="0" inputmode="numeric" />
+                </div>
+                <div class="manual-price-field">
+                  <label>Màn hình</label>
+                  <input type="text" id="mp-man" placeholder="0" inputmode="numeric" />
+                </div>
+                <div class="manual-price-field">
+                  <label>Camera</label>
+                  <input type="text" id="mp-camera" placeholder="0" inputmode="numeric" />
+                </div>
+                <div class="manual-price-field">
+                  <label>Vỏ</label>
+                  <input type="text" id="mp-vo" placeholder="0" inputmode="numeric" />
+                </div>
+                <div class="manual-price-field">
+                  <label>Sạc</label>
+                  <input type="text" id="mp-sac" placeholder="0" inputmode="numeric" />
+                </div>
+              </div>
+              <button class="btn-apply-manual" id="btn-apply-manual">
+                <i class="bi bi-check-circle"></i> Áp dụng giá thủ công
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Base price input -->
+        <div class="section-card">
+          <div class="section-header">
+            <i class="bi bi-tag-fill"></i>
+            <h2>Giá Cơ Sở Nhập Máy</h2>
+          </div>
+          <div class="base-price-input-wrap">
+            <input type="text" id="base-price" placeholder="0" class="base-price-input" inputmode="numeric" />
+            <span class="base-price-unit">đ</span>
+          </div>
+          <div class="base-price-hint">Nhập giá gốc bạn dự định trả cho khách</div>
+        </div>
+
+        <div class="step-nav-row">
+          <button class="btn-back" id="btn-back-step1b">
+            <i class="bi bi-arrow-left-circle-fill"></i> Quay lại
+          </button>
+          <button class="btn-next" id="btn-step2-next">
+            <span>Đánh Giá Tình Trạng</span>
+            <i class="bi bi-arrow-right-circle-fill"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: TÌNH TRẠNG + TRỢ GIÁ + TÍNH GIÁ -->
+      <div class="step-content" id="step-3" style="display:none;">
+        <div class="section-card">
+          <div class="section-header">
+            <i class="bi bi-clipboard-check-fill"></i>
+            <h2>Đánh Giá Tình Trạng</h2>
+          </div>
+
+          <!-- Tình trạng linh kiện / Ngoại hình -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-stars"></i> Tình Trạng Linh Kiện
+            </label>
+            <div class="condition-chips condition-tier-chips" id="condition-chips">
+              <button class="chip tier-chip active" data-value="1.0" data-tier="new">
+                <span class="tier-emoji"><i class="bi bi-star-fill"></i></span>
+                <span>Đẹp như mới</span>
+              </button>
+              <button class="chip tier-chip" data-value="0.95" data-tier="good">
+                <span class="tier-emoji"><i class="bi bi-hand-thumbs-up-fill"></i></span>
+                <span>Cũ đẹp</span>
+              </button>
+              <button class="chip tier-chip" data-value="0.90" data-tier="scratched">
+                <span class="tier-emoji"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                <span>Xước cấn</span>
+              </button>
+              <button class="chip tier-chip" data-value="0.70" data-tier="broken">
+                <span class="tier-emoji"><i class="bi bi-x-octagon-fill"></i></span>
+                <span>Xác</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Lỗi thiết bị -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-exclamation-triangle"></i> Lỗi Phát Hiện
+            </label>
+            <div class="defect-checkboxes">
+              <label class="defect-check" id="dc-man">
+                <input type="checkbox" id="cb-man" />
+                <span class="check-box-custom"></span>
+                <div class="defect-info">
+                  <span class="defect-name"><i class="bi bi-display"></i> Lỗi màn hình <span class="defect-sub-note">(hỗ trợ 15%)</span></span>
+                  <span class="defect-deduct" id="dd-man">-0đ</span>
+                </div>
+              </label>
+              <label class="defect-check" id="dc-pin">
+                <input type="checkbox" id="cb-pin" />
+                <span class="check-box-custom"></span>
+                <div class="defect-info">
+                  <span class="defect-name"><i class="bi bi-battery-half"></i> Pin &lt;85% <span class="defect-sub-note">(hỗ trợ 30%)</span></span>
+                  <span class="defect-deduct" id="dd-pin">-0đ</span>
+                </div>
+              </label>
+              <label class="defect-check" id="dc-vo">
+                <input type="checkbox" id="cb-vo" />
+                <span class="check-box-custom"></span>
+                <div class="defect-info">
+                  <span class="defect-name"><i class="bi bi-phone"></i> Vỏ xước <span class="defect-sub-note">(trừ 100%)</span></span>
+                  <span class="defect-deduct" id="dd-vo">-0đ</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Camera -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-camera"></i> Tình Trạng Camera
+            </label>
+            <div class="condition-chips" id="camera-chips">
+              <button class="chip active" data-camera="0">Bình thường</button>
+              <button class="chip" data-camera="1">1 đốm <span class="chip-sub">-500k</span></button>
+              <button class="chip" data-camera="2">2 đốm <span class="chip-sub">-800k</span></button>
+              <button class="chip" data-camera="3">≥3 đốm <span class="chip-sub" id="chip-camera-3-price">-giá thay</span></button>
+            </div>
+          </div>
+
+          <!-- Phụ kiện -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-box-seam"></i> Phụ Kiện
+            </label>
+            <div class="defect-checkboxes">
+              <label class="defect-check" id="dc-sac">
+                <input type="checkbox" id="cb-sac" />
+                <span class="check-box-custom"></span>
+                <div class="defect-info">
+                  <span class="defect-name"><i class="bi bi-plug"></i> Thiếu sạc <span class="device-sac-note" id="sac-note"></span></span>
+                  <span class="defect-deduct" id="dd-sac">-0đ</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-sticky"></i> Ghi Chú Thêm
+            </label>
+            <textarea id="notes-input" class="notes-textarea" placeholder="Ghi chú tình trạng khác..."></textarea>
+          </div>
+        </div>
+
+        <!-- ========== TRỢ GIÁ NHẬP CŨ ========== -->
+        <div class="section-card support-card">
+          <div class="section-header">
+            <i class="bi bi-gift-fill" style="color:var(--success);"></i>
+            <h2>Trợ Giá Nhập Cũ</h2>
+          </div>
+
+          <!-- Hạng thành viên -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-person-badge"></i> Hạng Thành Viên
+            </label>
+            <div class="condition-chips member-chips" id="member-chips">
+              <button class="chip member-chip active" data-member="none">Không</button>
+              <button class="chip member-chip" data-member="snew">
+                <i class="bi bi-person-fill snew-icon"></i>
+                <span>Snew</span>
+                <span class="chip-sub">max 200k</span>
+              </button>
+              <button class="chip member-chip" data-member="smem">
+                <i class="bi bi-star-fill smem-icon"></i>
+                <span>Smem</span>
+                <span class="chip-sub">max 300k</span>
+              </button>
+              <button class="chip member-chip" data-member="svip">
+                <i class="bi bi-gem svip-icon"></i>
+                <span>Svip</span>
+                <span class="chip-sub">max 500k</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Trợ giá thu cũ -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-arrow-repeat"></i> Trợ Giá Thu Cũ <span class="support-pct-badge">tối đa 30%</span>
+            </label>
+            <div class="support-input-row">
+              <div class="support-input-wrap">
+                <input type="text" id="support-tradein" placeholder="0" inputmode="numeric" />
+                <span class="support-unit">đ</span>
+              </div>
+              <span class="support-max-hint" id="support-tradein-max">Tối đa: —</span>
+            </div>
+          </div>
+
+          <!-- Giá máy mới (thu cũ đổi mới) -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-phone-flip"></i> Thu Cũ Đổi Mới <span class="support-pct-badge optional-badge">tùy chọn</span>
+            </label>
+            <div class="support-input-row">
+              <div class="support-input-wrap">
+                <input type="text" id="new-device-price" placeholder="Giá máy mới (nếu có)" inputmode="numeric" />
+                <span class="support-unit">đ</span>
+              </div>
+              <span class="support-max-hint" id="new-device-discount-info">Chiết khấu: —</span>
+            </div>
+          </div>
+
+          <!-- Trợ giá khác -->
+          <div class="condition-section">
+            <label class="condition-label">
+              <i class="bi bi-cash-coin"></i> Trợ Giá Khác
+            </label>
+            <div class="support-grid">
+              <div class="support-field">
+                <label>Ngành hàng</label>
+                <div class="support-input-wrap compact">
+                  <input type="text" id="support-category" placeholder="0" inputmode="numeric" />
+                  <span class="support-unit">đ</span>
+                </div>
+              </div>
+              <div class="support-field">
+                <label>Từ AM</label>
+                <div class="support-input-wrap compact">
+                  <input type="text" id="support-am" placeholder="0" inputmode="numeric" />
+                  <span class="support-unit">đ</span>
+                </div>
+              </div>
+              <div class="support-field">
+                <label>Phương thức TT</label>
+                <div class="support-input-wrap compact">
+                  <input type="text" id="support-payment" placeholder="0" inputmode="numeric" />
+                  <span class="support-unit">đ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIVE PRICE DISPLAY -->
+        <div class="price-result-card" id="price-result-card">
+          <div class="price-result-header">
+            <span class="price-result-label"><i class="bi bi-cash-coin" style="color:#ffd700;"></i> GIÁ NHẬP MÁY</span>
+            <span class="price-result-model" id="pr-model"></span>
+          </div>
+
+          <div class="price-breakdown">
+            <div class="pb-row" id="pbr-base">
+              <span>Giá cơ sở</span>
+              <span id="pb-base">0đ</span>
+            </div>
+            <div class="pb-row condition-row" id="pbr-condition">
+              <span>Tình trạng <span class="condition-pct" id="pb-condition-pct">Đẹp như mới</span></span>
+              <span id="pb-condition-val">0đ</span>
+            </div>
+            <div class="pb-deducts" id="pb-deducts">
+              <!-- Dynamic deduct rows -->
+            </div>
+          </div>
+
+          <!-- Trợ giá breakdown -->
+          <div class="pb-supports" id="pb-supports" style="display:none;">
+            <div class="pb-supports-title"><i class="bi bi-tags-fill"></i> Trợ giá</div>
+            <!-- Dynamic support rows -->
+          </div>
+
+          <div class="price-final-row">
+            <span class="price-final-label">GIÁ TRẢ KHÁCH</span>
+            <span class="price-final-value" id="pb-final">0đ</span>
+          </div>
+
+          <!-- Chiết khấu máy mới (nếu có) -->
+          <div class="pb-newdevice-row" id="pb-newdevice-row" style="display:none;">
+            <span class="pb-newdevice-label"><i class="bi bi-gift-fill"></i> Chiết khấu máy mới</span>
+            <span class="pb-newdevice-value" id="pb-newdevice-val">0đ</span>
+          </div>
+        </div>
+
+        <div class="step-nav-row">
+          <button class="btn-back" id="btn-back-step2">
+            <i class="bi bi-arrow-left-circle-fill"></i> Quay lại
+          </button>
+          <div class="action-buttons">
+            <button class="btn-confirm" id="btn-confirm">
+              <i class="bi bi-check-circle-fill"></i>
+              CHỐT KHÁCH
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW INTAKE BUTTON (show after confirm) -->
+      <div id="new-intake-banner" style="display:none;" class="new-intake-banner">
+        <div class="success-anim">✅</div>
+        <h3>Đã lưu giao dịch!</h3>
+        <p>Máy đã được lưu vào hệ thống</p>
+        <button class="btn-new-intake" id="btn-new-intake">
+          <i class="bi bi-plus-circle-fill"></i> Nhập Máy Mới
+        </button>
+        <button class="btn-view-bill" id="btn-view-bill-after">
+          <i class="bi bi-printer-fill"></i> Xem Lại Bill
+        </button>
+      </div>
+
+    </div>
+    <!-- END TAB INTAKE -->
+
+    <!-- ========== TAB: LỊCH SỬ ========== -->
+    <div class="tab-pane" id="tab-history" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="bi bi-clock-history"></i>
+          <h2>Lịch Sử Giao Dịch</h2>
+        </div>
+
+        <!-- Search filters -->
+        <div class="history-filters">
+          <div class="filter-field">
+            <i class="bi bi-telephone"></i>
+            <input type="text" id="filter-phone" placeholder="Tìm theo SĐT..." />
+          </div>
+          <div class="filter-field">
+            <i class="bi bi-phone"></i>
+            <input type="text" id="filter-model" placeholder="Tìm theo model..." />
+          </div>
+          <div class="filter-field">
+            <i class="bi bi-calendar3"></i>
+            <input type="date" id="filter-date" />
+          </div>
+          <button class="btn-filter-search" id="btn-history-search">
+            <i class="bi bi-search"></i> Tìm
+          </button>
+          <button class="btn-filter-clear" id="btn-history-clear">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- History list -->
+      <div id="history-list" class="history-list">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Đang tải...</span>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="history-pagination" id="history-pagination" style="display:none;">
+        <button id="btn-prev-page" class="btn-page"><i class="bi bi-chevron-left"></i></button>
+        <span id="page-info">Trang 1 / 1</span>
+        <button id="btn-next-page" class="btn-page"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+    <!-- END TAB HISTORY -->
+
+    <!-- ========== TAB: DASHBOARD ========== -->
+    <div class="tab-pane" id="tab-dashboard" style="display:none;">
+      <!-- Date selector -->
+      <div class="section-card">
+        <div class="dashboard-header-row">
+          <div class="section-header" style="margin:0;">
+            <i class="bi bi-bar-chart-fill"></i>
+            <h2>Thống Kê</h2>
+          </div>
+          <div class="dash-date-wrap">
+            <input type="date" id="dash-date" class="dash-date-input" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="stats-grid">
+        <div class="stat-card stat-blue">
+          <div class="stat-icon"><i class="bi bi-phone-fill"></i></div>
+          <div class="stat-value" id="stat-count">—</div>
+          <div class="stat-label">Số máy nhập</div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-icon"><i class="bi bi-cash-stack"></i></div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Tổng tiền nhập</div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-icon"><i class="bi bi-graph-up"></i></div>
+          <div class="stat-value" id="stat-avg">—</div>
+          <div class="stat-label">Giá trung bình</div>
+        </div>
+      </div>
+
+      <!-- Top staff (admin only) -->
+      <div class="section-card admin-only" id="top-staff-card">
+        <div class="section-header">
+          <i class="bi bi-trophy-fill"></i>
+          <h2>Top Nhân Viên Hôm Nay</h2>
+        </div>
+        <div id="top-staff-list" class="top-staff-list">
+          <div class="loading-state"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Device breakdown -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="bi bi-pie-chart-fill"></i>
+          <h2>Theo Loại Thiết Bị</h2>
+        </div>
+        <div id="device-breakdown" class="device-breakdown-list">
+          <div class="loading-state"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Recent transactions -->
+      <div class="section-card">
+        <div class="section-header">
+          <i class="bi bi-list-ul"></i>
+          <h2>Giao Dịch Gần Đây</h2>
+        </div>
+        <div id="dash-recent" class="history-list compact">
+          <div class="loading-state"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+    <!-- END TAB DASHBOARD -->
+
+    <!-- ========== TAB: SETTINGS (ADMIN ONLY) ========== -->
+    <div class="tab-pane" id="tab-settings" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="bi bi-people-fill"></i>
+          <h2>Quản Lý Nhân Viên</h2>
+        </div>
+        <div id="staff-list" class="staff-list">
+          <div class="loading-state"><div class="spinner"></div></div>
+        </div>
+        <button class="btn-add-staff" id="btn-add-staff">
+          <i class="bi bi-person-plus-fill"></i> Thêm Nhân Viên
+        </button>
+      </div>
+    </div>
+    <!-- END TAB SETTINGS -->
+
+  </main>
+
+</div>
+<!-- END APP SCREEN -->
+
+<!-- ============================================================
+     BILL MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="bill-modal" style="display:none;">
+  <div class="bill-modal-container">
+    <!-- Print area -->
+    <div class="bill-print-area" id="bill-print-area">
+      <div class="bill-header">
+        <div class="bill-logo">📱</div>
+        <div class="bill-shop-name">MOBILE SHOP</div>
+        <div class="bill-shop-sub">Mua Bán - Thu Mua Điện Thoại</div>
+        <div class="bill-divider"></div>
+      </div>
+
+      <div class="bill-meta">
+        <div class="bill-meta-row">
+          <span>Mã GD:</span>
+          <strong id="bill-id">#0000</strong>
+        </div>
+        <div class="bill-meta-row">
+          <span>Ngày:</span>
+          <strong id="bill-date">—</strong>
+        </div>
+        <div class="bill-meta-row">
+          <span>NV:</span>
+          <strong id="bill-staff">—</strong>
+        </div>
+      </div>
+
+      <div class="bill-divider dashed"></div>
+
+      <div class="bill-customer">
+        <div class="bill-section-title">KHÁCH HÀNG</div>
+        <div class="bill-meta-row">
+          <span>Tên:</span>
+          <strong id="bill-customer-name">—</strong>
+        </div>
+        <div class="bill-meta-row">
+          <span>SĐT:</span>
+          <strong id="bill-customer-phone">—</strong>
+        </div>
+      </div>
+
+      <div class="bill-divider dashed"></div>
+
+      <div class="bill-device">
+        <div class="bill-section-title">THIẾT BỊ</div>
+        <div class="bill-meta-row">
+          <span>Loại:</span>
+          <strong id="bill-device-type">—</strong>
+        </div>
+        <div class="bill-meta-row">
+          <span>Model:</span>
+          <strong id="bill-model">—</strong>
+        </div>
+        <div class="bill-meta-row">
+          <span>Ngoại hình:</span>
+          <strong id="bill-condition">—</strong>
+        </div>
+      </div>
+
+      <div class="bill-divider dashed"></div>
+
+      <div class="bill-price-detail">
+        <div class="bill-section-title">CHI TIẾT GIÁ</div>
+        <div id="bill-deduct-list" class="bill-deduct-list">
+          <!-- Dynamic rows -->
+        </div>
+      </div>
+
+      <div class="bill-divider"></div>
+
+      <div class="bill-total-row">
+        <span class="bill-total-label">GIÁ NHẬP</span>
+        <span class="bill-total-value" id="bill-final-price">0đ</span>
+      </div>
+
+      <div class="bill-notes-section" id="bill-notes-wrap" style="display:none;">
+        <div class="bill-divider dashed"></div>
+        <div class="bill-section-title">GHI CHÚ</div>
+        <div id="bill-notes-text" class="bill-notes-text"></div>
+      </div>
+
+      <div class="bill-divider dashed"></div>
+      <div class="bill-footer">
+        <p>Cảm ơn quý khách đã tin tưởng!</p>
+        <p class="bill-footer-sub">Hotline: 0900 000 000</p>
+      </div>
+    </div>
+
+    <!-- Modal action buttons (no print) -->
+    <div class="bill-actions no-print">
+      <button class="btn-bill-edit" id="btn-bill-edit">
+        <i class="bi bi-pencil-square"></i> Sửa
+      </button>
+      <button class="btn-bill-print" id="btn-bill-print">
+        <i class="bi bi-printer-fill"></i> In
+      </button>
+      <button class="btn-bill-pdf" id="btn-bill-pdf">
+        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+      </button>
+      <button class="btn-bill-close" id="btn-bill-close">
+        <i class="bi bi-x-circle-fill"></i> Đóng
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PROFILE BOTTOM SHEET
+     ============================================================ -->
+<div class="bottom-sheet-overlay" id="profile-sheet-overlay" style="display:none;">
+  <div class="bottom-sheet" id="profile-bottom-sheet">
+    <div class="bs-drag-handle"></div>
+    <div class="bs-content">
+      <div class="profile-info-large">
+        <div class="profile-avatar-large">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <div class="profile-details-large">
+          <span id="sheet-user-name">Loading...</span>
+          <span class="role-badge" id="sheet-user-role">NV</span>
+        </div>
+      </div>
+      
+      <div class="bs-actions">
+        <button class="btn-logout-full" id="btn-logout-sheet">
+          <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADD STAFF MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="add-staff-modal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-card-header">
+      <h3 id="modal-staff-title"><i class="bi bi-person-plus-fill"></i> Thêm Nhân Viên</h3>
+      <button class="btn-modal-close" id="btn-add-staff-close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <form id="add-staff-form">
+      <div class="form-field">
+        <label>Tên hiển thị</label>
+        <div class="field-input-wrap">
+          <i class="bi bi-person"></i>
+          <input type="text" id="new-staff-name" placeholder="Nguyễn Văn A" required />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Username</label>
+        <div class="field-input-wrap">
+          <i class="bi bi-at"></i>
+          <input type="text" id="new-staff-username" placeholder="nv3" required />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Mật khẩu</label>
+        <div class="field-input-wrap">
+          <i class="bi bi-lock"></i>
+          <input type="password" id="new-staff-password" placeholder="••••••" />
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Vai trò</label>
+        <div class="field-input-wrap">
+          <i class="bi bi-shield"></i>
+          <select id="new-staff-role">
+            <option value="staff">Nhân viên</option>
+            <option value="admin">Quản trị viên</option>
+          </select>
+        </div>
+      </div>
+      <div id="add-staff-error" class="login-error" style="display:none;"></div>
+      <button type="submit" class="btn-login" id="btn-save-staff">
+        <span id="btn-save-staff-text">Thêm Nhân Viên</span>
+        <i class="bi bi-check-circle-fill"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     CONFIRM MODAL / BOTTOM SHEET
+     ============================================================ -->
+<div class="confirm-overlay" id="confirm-modal" style="display:none;">
+  <div class="confirm-card">
+    <div class="confirm-content">
+      <div class="confirm-icon" id="confirm-modal-icon">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <h3 id="confirm-modal-title">Xác nhận</h3>
+      <p id="confirm-modal-msg">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+    </div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" id="btn-confirm-cancel">Hủy</button>
+      <button class="btn-confirm-ok" id="btn-confirm-ok">Đồng Ý</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- App JS -->
+<script src="/js/app.js"></script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('✅ SW registered'))
+        .catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
+
+</body>
+</html>

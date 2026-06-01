@@ -1,986 +1,1236 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html class="dark" lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="theme-color" content="#1a1f36" />
-  <meta name="description" content="Hệ thống quản lý nhập máy điện thoại chuyên nghiệp - Mobile Shop" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>📱 Nhập Máy Pro - Mobile Shop</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+  <meta name="theme-color" content="#0f131d" />
+  <meta name="description" content="Premium Tech POS - Hệ thống định giá thu mua và nhập máy chuyên nghiệp" />
+  <title>Premium Tech POS - Hệ thống nhập máy chuyên nghiệp</title>
 
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Tailwind CSS & Plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json" />
-  <!-- App CSS -->
-  <link rel="stylesheet" href="/css/app.css" />
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;900&display=swap" rel="stylesheet"/>
+
+  <!-- Tailwind Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary": "rgb(var(--primary) / <alpha-value>)",
+            "on-primary": "rgb(var(--on-primary) / <alpha-value>)",
+            "primary-container": "rgb(var(--primary-container) / <alpha-value>)",
+            "on-primary-container": "rgb(var(--on-primary-container) / <alpha-value>)",
+            "secondary": "rgb(var(--secondary) / <alpha-value>)",
+            "secondary-container": "rgb(var(--secondary-container) / <alpha-value>)",
+            "tertiary": "rgb(var(--tertiary) / <alpha-value>)",
+            "tertiary-container": "rgb(var(--tertiary-container) / <alpha-value>)",
+            "surface": "rgb(var(--surface) / <alpha-value>)",
+            "surface-container": "rgb(var(--surface-container) / <alpha-value>)",
+            "surface-container-high": "rgb(var(--surface-container-high) / <alpha-value>)",
+            "surface-container-low": "rgb(var(--surface-container-low) / <alpha-value>)",
+            "background": "rgb(var(--background) / <alpha-value>)",
+            "on-surface": "rgb(var(--on-surface) / <alpha-value>)",
+            "on-surface-variant": "rgb(var(--on-surface-variant) / <alpha-value>)",
+            "outline": "rgb(var(--outline) / <alpha-value>)",
+            "outline-variant": "rgb(var(--outline-variant) / <alpha-value>)",
+            "coral": "rgb(var(--coral) / <alpha-value>)",
+            "emerald": "rgb(var(--emerald) / <alpha-value>)",
+            "neon-blue": "rgb(var(--neon-blue) / <alpha-value>)",
+            "indigo": "rgb(var(--indigo) / <alpha-value>)"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "16px",
+            "max-width-content": "1440px",
+            "container-padding": "24px",
+            "base-unit": "8px",
+            "sidebar-width": "380px"
+          },
+          "fontFamily": {
+            "sans": ["Inter", "sans-serif"],
+            "outfit": ["Outfit", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ============================================================
+       MATERIAL DESIGN 3 DESIGN TOKENS (RGB for Tailwind opacity)
+       ============================================================ */
+    :root {
+      --primary: 0 90 194;
+      --on-primary: 255 255 255;
+      --primary-container: 216 226 255;
+      --on-primary-container: 0 26 65;
+      --secondary: 83 95 112;
+      --secondary-container: 215 227 247;
+      --tertiary: 0 108 74;
+      --tertiary-container: 137 248 199;
+      --surface: 253 251 255;
+      --surface-container: 243 244 249;
+      --surface-container-high: 236 238 244;
+      --surface-container-low: 248 249 255;
+      --background: 240 242 245;
+      --on-surface: 17 24 39;
+      --on-surface-variant: 75 85 99;
+      --outline: 116 119 127;
+      --outline-variant: 196 198 208;
+      --coral: 220 38 38;
+      --emerald: 5 150 105;
+      --neon-blue: 59 130 246;
+      --indigo: 79 70 229;
+    }
+
+    .dark {
+      --primary: 173 198 255;
+      --on-primary: 0 46 106;
+      --primary-container: 77 142 255;
+      --on-primary-container: 0 40 93;
+      --secondary: 192 193 255;
+      --secondary-container: 49 49 192;
+      --tertiary: 78 222 163;
+      --tertiary-container: 0 165 114;
+      --surface: 15 19 29;
+      --surface-container: 28 31 42;
+      --surface-container-high: 38 42 53;
+      --surface-container-low: 23 27 38;
+      --background: 15 19 29;
+      --on-surface: 223 226 241;
+      --on-surface-variant: 194 198 214;
+      --outline: 140 144 159;
+      --outline-variant: 66 71 84;
+      --coral: 255 107 107;
+      --emerald: 16 185 129;
+      --neon-blue: 59 130 246;
+      --indigo: 79 70 229;
+    }
+
+    /* Glass panel utilities */
+    .glass-card, .glass-panel {
+      background-color: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover, .glass-panel:hover {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background-color: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    }
+    .glass-panel-elevated {
+      background-color: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
+    }
+    .glass-card.active, .chip.active {
+      border-color: rgba(173, 198, 255, 0.4);
+      background: rgba(173, 198, 255, 0.1);
+      box-shadow: 0 0 15px rgba(173, 198, 255, 0.15);
+    }
+    
+    /* Interactive states for Chips */
+    .chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .chip.active {
+      background: rgba(173, 198, 255, 0.12) !important;
+      border-color: #adc6ff !important;
+      color: #adc6ff !important;
+    }
+
+    /* Gradient buttons */
+    .gradient-btn {
+      background: linear-gradient(135deg, #3b82f6, #4f46e5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gradient-btn:hover {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
+    }
+    .gradient-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    /* Modal Overlay animation */
+    .modal-overlay {
+      background: rgba(10, 14, 24, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+
+    /* Custom Styles for defects/toggle cards */
+    .defect-card {
+      transition: all 0.2s ease;
+    }
+    .defect-card:has(input:checked) {
+      border-color: rgba(255, 107, 107, 0.4);
+      background: rgba(255, 107, 107, 0.06);
+    }
+    
+    /* Device Brand Grid Styles */
+    .device-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.2s ease;
+    }
+    .device-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .device-btn.active {
+      background: rgba(77, 142, 255, 0.1);
+      border-color: #4d8eff;
+      color: #adc6ff;
+      box-shadow: 0 0 15px rgba(77, 142, 255, 0.15);
+    }
+    
+    /* Autocomplete list styling */
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: #171b26;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .ac-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #dfe2f1;
+      transition: background 0.15s ease;
+    }
+    .ac-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #adc6ff;
+    }
+
+    /* Toast system styles */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .app-toast {
+      min-width: 300px;
+      max-width: 90vw;
+      background: rgba(28, 31, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #dfe2f1;
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+      animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .app-toast.error {
+      border-color: rgba(255, 107, 107, 0.3);
+      box-shadow: 0 10px 30px rgba(255, 107, 107, 0.1);
+    }
+    .app-toast.success {
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* MD3 Top Tabs Styling */
+    .nav-item {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-item.active {
+      background: rgba(173, 198, 255, 0.15);
+      color: #adc6ff;
+      box-shadow: inset 0 0 0 1px rgba(173, 198, 255, 0.2);
+    }
+    .nav-item:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Mobile Bottom Dock - Premium Glassmorphic Pill */
+    .mobile-dock {
+      background: rgba(15, 19, 29, 0.65);
+      backdrop-filter: blur(50px) saturate(2);
+      -webkit-backdrop-filter: blur(50px) saturate(2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 0 0.5px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+    .dock-item {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dock-item:active {
+      transform: scale(0.9);
+    }
+    .dock-item.active {
+      color: #adc6ff;
+    }
+    .dock-item.active .dock-icon {
+      background: rgba(173, 198, 255, 0.15);
+      box-shadow: 0 0 16px rgba(173, 198, 255, 0.35);
+    }
+    .dock-center-btn {
+      background: linear-gradient(135deg, #4d8eff, #3131c0);
+      box-shadow: 0 4px 20px rgba(77, 142, 255, 0.4);
+    }
+    .dock-center-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Light mode specific non-color overrides */
+    html:not(.dark) .nav-item.active {
+      box-shadow: inset 0 0 0 1px rgba(0, 90, 194, 0.4);
+      background: rgba(0, 90, 194, 0.08);
+      color: rgb(var(--primary)) !important;
+    }
+    html:not(.dark) .nav-item:hover:not(.active) {
+      background: rgba(0, 0, 0, 0.04);
+      color: rgb(var(--on-surface-variant));
+    }
+    html:not(.dark) .glass-card,
+    html:not(.dark) .glass-panel,
+    html:not(.dark) .glass-panel-elevated {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    html:not(.dark) .glass-card:hover,
+    html:not(.dark) .glass-panel:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+    html:not(.dark) .mobile-dock {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+    html:not(.dark) header {
+      background: rgba(255, 255, 255, 0.85) !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+    }
+    html:not(.dark) input, html:not(.dark) textarea {
+      color: rgb(var(--on-surface)) !important;
+    }
+    html:not(.dark) .chip, html:not(.dark) .device-btn {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      color: rgb(var(--on-surface));
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    html:not(.dark) .chip:hover, html:not(.dark) .device-btn:hover {
+      background: #fdfbff;
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+    html:not(.dark) .dock-item.active .dock-icon {
+      background: rgba(0, 90, 194, 0.08);
+      box-shadow: 0 0 12px rgba(0, 90, 194, 0.2);
+    }
+    html:not(.dark) .dock-item.active {
+      color: rgb(var(--primary)) !important;
+    }
+    html:not(.dark) .device-btn.active,
+    html:not(.dark) .chip.active {
+      background: rgba(0, 90, 194, 0.08) !important;
+      border-color: rgba(0, 90, 194, 0.4) !important;
+      color: rgb(var(--primary)) !important;
+      box-shadow: 0 2px 8px rgba(0, 90, 194, 0.15) !important;
+    }
+    html:not(.dark) .autocomplete-dropdown {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    html:not(.dark) .ac-item {
+      color: rgb(var(--on-surface));
+    }
+    html:not(.dark) .ac-item:hover {
+      background: rgba(0, 0, 0, 0.04);
+      color: rgb(var(--primary));
+    }
+    
+    /* Bulletproof fallbacks for opacity backgrounds in light mode */
+    html:not(.dark) .bg-surface-container\/30 { background-color: rgba(243, 244, 249, 0.3) !important; }
+    html:not(.dark) .bg-surface-container\/50 { background-color: rgba(243, 244, 249, 0.5) !important; }
+    html:not(.dark) .bg-surface-container\/60 { background-color: rgba(243, 244, 249, 0.6) !important; }
+    html:not(.dark) .bg-surface-container-high\/40 { background-color: rgba(236, 238, 244, 0.4) !important; }
+    html:not(.dark) .bg-surface-container-high\/70 { background-color: rgba(236, 238, 244, 0.7) !important; }
+    html:not(.dark) .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
+    html:not(.dark) .border-white\/5 { border-color: rgba(0,0,0,0.04) !important; }
+    html:not(.dark) .text-white:not(.gradient-btn) { color: #111827 !important; }
+
+    @media (max-width: 1023px) {
+      .mobile-dock { display: flex !important; }
+    }
+    @media (min-width: 1024px) {
+      .mobile-dock { display: none !important; }
+    }
+  </style>
+
 </head>
-<body>
+<body class="bg-background text-on-surface font-sans antialiased overflow-x-hidden h-screen selection:bg-primary/30">
 
-<!-- ============================================================
-     LOGIN SCREEN
-     ============================================================ -->
-<div id="login-screen" class="screen" style="display:none;">
-  <div class="login-bg">
-    <div class="login-card">
-      <div class="login-logo">
-        <div class="logo-icon">📱</div>
-        <h1>MOBILE SHOP</h1>
-        <p>Hệ Thống Quản Lý Nhập Máy</p>
+  <!-- ============================================================
+       TOP APP BAR
+       ============================================================ -->
+  <header class="fixed top-0 w-full z-40 flex justify-between items-center px-4 lg:px-container-padding h-14 lg:h-16 bg-surface/40 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
+    <!-- Left: Logo & Title -->
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center shadow-[0_0_15px_rgba(77,142,255,0.2)] lg:w-10 lg:h-10">
+        <span class="font-outfit text-sm lg:text-base font-black text-on-primary">PT</span>
       </div>
-      <form id="login-form" autocomplete="on">
-        <div class="input-group-custom">
-          <i class="bi bi-person-fill"></i>
-          <input type="text" id="login-username" placeholder="Tên đăng nhập" autocomplete="username" />
-        </div>
-        <div class="input-group-custom">
-          <i class="bi bi-lock-fill"></i>
-          <input type="password" id="login-password" placeholder="Mật khẩu" autocomplete="current-password" />
-        </div>
-        <div id="login-error" class="login-error" style="display:none;"></div>
-        <button type="submit" class="btn-login" id="btn-login">
-          <span>Đăng Nhập</span>
-          <i class="bi bi-arrow-right-circle-fill"></i>
-        </button>
-      </form>
-      <div class="login-hint">
-        <small>admin / admin123 &nbsp;|&nbsp; nv1 / 123456</small>
-      </div>
+      <h1 class="text-base lg:text-xl font-outfit font-bold text-primary tracking-tight hidden sm:block">Premium Tech</h1>
     </div>
-  </div>
-</div>
 
-<!-- ============================================================
-     MAIN APP (shown after login)
-     ============================================================ -->
-<div id="app-screen" class="screen" style="display:none;">
+    <!-- Center: MD3 Tabs (Desktop Only) -->
+    <nav class="hidden lg:flex items-center gap-2 p-1 rounded-full bg-surface-container-low/50 border border-white/5 shadow-inner">
+      <a class="nav-item active px-5 py-2 rounded-full flex items-center gap-2 text-sm font-semibold transition-all text-on-surface-variant cursor-pointer" id="nav-intake" data-tab="intake">
+        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">add_box</span> Nhập Máy
+      </a>
+      <a class="nav-item px-5 py-2 rounded-full flex items-center gap-2 text-sm font-semibold transition-all text-on-surface-variant cursor-pointer" id="nav-history" data-tab="history">
+        <span class="material-symbols-outlined text-[20px]">history</span> Lịch Sử
+      </a>
+      <a class="nav-item px-5 py-2 rounded-full flex items-center gap-2 text-sm font-semibold transition-all text-on-surface-variant cursor-pointer">
+        <span class="material-symbols-outlined text-[20px]">help</span> Hỗ Trợ
+      </a>
+    </nav>
 
-  <!-- TOP HEADER -->
-  <header class="app-header">
-    <div class="header-left">
-      <span class="header-logo"><i class="bi bi-phone-fill" style="color: #4f75ff; font-size: 1.5rem;"></i></span>
-      <span class="header-title">MOBILE SHOP</span>
-    </div>
-    <div class="header-right">
-      <button class="btn-icon" id="btn-theme-toggle" title="Giao diện sáng/tối">
-        <i class="bi bi-moon-stars-fill"></i>
+    <!-- Right: Profile & Datetime -->
+    <div class="flex items-center gap-3 lg:gap-6">
+      <span class="text-[10px] lg:text-xs font-semibold text-on-surface-variant uppercase tracking-wider hidden md:inline" id="header-datetime">Hôm Nay • Operator: Admin</span>
+      
+      <!-- Desktop Dark/Light Mode Toggle -->
+      <button class="hidden lg:flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50" id="desktop-theme-toggle">
+        <span class="material-symbols-outlined" id="desktop-theme-icon">dark_mode</span>
+      </button>
+
+      <button class="h-10 w-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
       </button>
     </div>
   </header>
 
-  <!-- NAVIGATION TABS -->
-  <nav class="app-nav">
-    <button class="nav-item active" data-tab="intake" id="nav-intake">
-      <i class="bi bi-plus-circle-fill"></i>
-      <span>Nhập Máy</span>
-    </button>
-    <button class="nav-item" data-tab="history" id="nav-history">
-      <i class="bi bi-clock-history"></i>
-      <span>Lịch Sử</span>
-    </button>
-    <button class="nav-item" data-tab="dashboard" id="nav-dashboard">
-      <i class="bi bi-bar-chart-fill"></i>
-      <span>Thống Kê</span>
-    </button>
-    <button class="nav-item admin-only" data-tab="settings" id="nav-settings">
-      <i class="bi bi-gear-fill"></i>
-      <span>Quản Lý</span>
-    </button>
-    <button class="nav-item" id="nav-profile">
-      <i class="bi bi-person-circle"></i>
-      <span>Tài Khoản</span>
-    </button>
-  </nav>
-
-  <!-- MAIN CONTENT -->
-  <main class="app-content">
-
-    <!-- ========== TAB: NHẬP MÁY ========== -->
-    <div class="tab-pane active" id="tab-intake">
-
-      <!-- Step Progress -->
-      <div class="step-progress">
-        <div class="step active" id="sp1">
-          <div class="step-dot"><i class="bi bi-person-fill"></i></div>
-          <span>Thông tin</span>
-        </div>
-        <div class="step-line"></div>
-        <div class="step" id="sp2">
-          <div class="step-dot"><i class="bi bi-currency-dollar"></i></div>
-          <span>Giá tham chiếu</span>
-        </div>
-        <div class="step-line"></div>
-        <div class="step" id="sp3">
-          <div class="step-dot"><i class="bi bi-check2-circle"></i></div>
-          <span>Tình trạng</span>
-        </div>
-      </div>
-
-      <!-- STEP 1: THÔNG TIN -->
-      <div class="step-content" id="step-1">
-        <div class="section-card">
-          <div class="section-header">
-            <i class="bi bi-person-vcard-fill"></i>
-            <h2>Thông Tin Khách Hàng</h2>
-          </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label>Tên khách <span class="required">*</span></label>
-              <div class="field-input-wrap">
-                <i class="bi bi-person"></i>
-                <input type="text" id="customer-name" placeholder="Nguyễn Văn A" autocomplete="off" />
-              </div>
-            </div>
-            <div class="form-field">
-              <label>Số điện thoại <span class="required">*</span></label>
-              <div class="field-input-wrap">
-                <i class="bi bi-telephone"></i>
-                <input type="tel" id="customer-phone" placeholder="0901234567" inputmode="numeric" />
-              </div>
-            </div>
-          </div>
-
-          <div class="form-field">
-            <label>Nhân viên tiếp nhận</label>
-            <div class="field-input-wrap readonly">
-              <i class="bi bi-person-badge"></i>
-              <input type="text" id="staff-display" readonly />
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-header">
-            <i class="bi bi-phone-fill"></i>
-            <h2>Thiết Bị</h2>
-          </div>
-
-          <!-- Device Type Selector -->
-          <div class="form-field">
-            <label>Loại thiết bị <span class="required">*</span></label>
-            <div class="device-type-grid" id="device-type-grid">
-              <button class="device-btn active" data-type="iPhone">
-                <span class="device-icon"><i class="bi bi-apple"></i></span>
-                <span>iPhone</span>
-              </button>
-              <button class="device-btn" data-type="Android">
-                <span class="device-icon"><i class="bi bi-android2"></i></span>
-                <span>Android</span>
-              </button>
-              <button class="device-btn" data-type="MacBook">
-                <span class="device-icon"><i class="bi bi-laptop"></i></span>
-                <span>MacBook</span>
-              </button>
-              <button class="device-btn" data-type="iPad">
-                <span class="device-icon"><i class="bi bi-tablet"></i></span>
-                <span>iPad</span>
-              </button>
-              <button class="device-btn" data-type="Watch">
-                <span class="device-icon"><i class="bi bi-smartwatch"></i></span>
-                <span>Watch</span>
-              </button>
-              <button class="device-btn" data-type="AirPods">
-                <span class="device-icon"><i class="bi bi-earbuds"></i></span>
-                <span>AirPods</span>
-              </button>
-              <button class="device-btn" data-type="Mac mini">
-                <span class="device-icon"><i class="bi bi-pc-display"></i></span>
-                <span>Mac mini</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Model Autocomplete -->
-          <div class="form-field" style="position:relative;">
-            <label>Model <span class="required">*</span></label>
-            <div class="field-input-wrap">
-              <i class="bi bi-search"></i>
-              <input type="text" id="model-input" placeholder="Nhập model... (VD: iPhone 15 Pro Max)" autocomplete="off" />
-              <button class="field-clear-btn" id="clear-model" style="display:none;">
-                <i class="bi bi-x-circle-fill"></i>
-              </button>
-            </div>
-            <!-- Autocomplete dropdown -->
-            <div class="autocomplete-dropdown" id="autocomplete-list" style="display:none;"></div>
-          </div>
-
-          <!-- Quick Model Suggestions -->
-          <div id="quick-models" class="quick-model-chips">
-            <!-- Will be populated by JS based on device type -->
-          </div>
-        </div>
-
-        <button class="btn-next" id="btn-step1-next">
-          <span>Tiếp Theo</span>
-          <i class="bi bi-arrow-right-circle-fill"></i>
-        </button>
-      </div>
-
-      <!-- STEP 2: AUTO GIÁ -->
-      <div class="step-content" id="step-2" style="display:none;">
-        <div class="section-card">
-          <div class="section-header">
-            <i class="bi bi-currency-dollar"></i>
-            <h2>Giá Tham Chiếu</h2>
-          </div>
-
-          <!-- Model selected display -->
-          <div class="selected-device-banner">
-            <span id="s2-device-icon">🍎</span>
-            <div>
-              <div class="selected-model-name" id="s2-model-name">iPhone 15 Pro Max</div>
-              <div class="selected-device-type" id="s2-device-type">iPhone</div>
-            </div>
-            <button class="btn-change-model" id="btn-back-step1">
-              <i class="bi bi-pencil"></i> Đổi
-            </button>
-          </div>
-
-          <!-- Price loading state -->
-          <div id="price-loading" class="price-loading">
-            <div class="spinner"></div>
-            <span>Đang lấy giá từ Điện Thoại Vui...</span>
-          </div>
-
-          <!-- Price error / manual -->
-          <div id="price-error-block" style="display:none;">
-            <div class="price-error-banner">
-              <i class="bi bi-exclamation-triangle-fill"></i>
-              <span id="price-error-msg">Không lấy được giá tự động</span>
-            </div>
-            <div class="manual-price-hint">Nhập giá thủ công bên dưới ↓</div>
-          </div>
-
-          <!-- Price cards -->
-          <div id="price-cards" style="display:none;">
-            <div class="price-source-badge">
-              <i class="bi bi-shield-check-fill"></i>
-              Giá từ <strong>Điện Thoại Vui</strong>
-              <span class="price-model-found" id="price-model-found"></span>
-            </div>
-            <div class="price-grid">
-              <div class="price-card" id="pc-pin">
-                <div class="price-card-label"><i class="bi bi-battery-charging"></i> Thay Pin</div>
-                <div class="price-card-value" id="pv-pin">—</div>
-                <div class="price-card-name" id="pn-pin" style="display:none;"></div>
-              </div>
-              <div class="price-card" id="pc-man">
-                <div class="price-card-label"><i class="bi bi-phone"></i> Thay Màn</div>
-                <div class="price-card-value" id="pv-man">—</div>
-                <div class="price-card-name" id="pn-man" style="display:none;"></div>
-              </div>
-              <div class="price-card" id="pc-camera">
-                <div class="price-card-label"><i class="bi bi-camera"></i> Thay Camera</div>
-                <div class="price-card-value" id="pv-camera">—</div>
-                <div class="price-card-name" id="pn-camera" style="display:none;"></div>
-              </div>
-              <div class="price-card" id="pc-vo">
-                <div class="price-card-label"><i class="bi bi-phone-flip"></i> Thay Vỏ</div>
-                <div class="price-card-value" id="pv-vo">—</div>
-                <div class="price-card-name" id="pn-vo" style="display:none;"></div>
-              </div>
-              <div class="price-card" id="pc-sac">
-                <div class="price-card-label"><i class="bi bi-plug"></i> Thay Sạc</div>
-                <div class="price-card-value" id="pv-sac">—</div>
-                <div class="price-card-name" id="pn-sac" style="display:none;"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Manual price override -->
-          <div class="manual-prices-section">
-            <div class="manual-toggle-row">
-              <label>Nhập giá thủ công (nếu cần)</label>
-              <button class="btn-toggle-manual" id="btn-toggle-manual">
-                <i class="bi bi-chevron-down"></i>
-              </button>
-            </div>
-            <div id="manual-prices-form" style="display:none;">
-              <div class="manual-price-grid">
-                <div class="manual-price-field">
-                  <label>Pin</label>
-                  <input type="text" id="mp-pin" placeholder="0" inputmode="numeric" />
-                </div>
-                <div class="manual-price-field">
-                  <label>Màn hình</label>
-                  <input type="text" id="mp-man" placeholder="0" inputmode="numeric" />
-                </div>
-                <div class="manual-price-field">
-                  <label>Camera</label>
-                  <input type="text" id="mp-camera" placeholder="0" inputmode="numeric" />
-                </div>
-                <div class="manual-price-field">
-                  <label>Vỏ</label>
-                  <input type="text" id="mp-vo" placeholder="0" inputmode="numeric" />
-                </div>
-                <div class="manual-price-field">
-                  <label>Sạc</label>
-                  <input type="text" id="mp-sac" placeholder="0" inputmode="numeric" />
-                </div>
-              </div>
-              <button class="btn-apply-manual" id="btn-apply-manual">
-                <i class="bi bi-check-circle"></i> Áp dụng giá thủ công
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Base price input -->
-        <div class="section-card">
-          <div class="section-header">
-            <i class="bi bi-tag-fill"></i>
-            <h2>Giá Cơ Sở Nhập Máy</h2>
-          </div>
-          <div class="base-price-input-wrap">
-            <input type="text" id="base-price" placeholder="0" class="base-price-input" inputmode="numeric" />
-            <span class="base-price-unit">đ</span>
-          </div>
-          <div class="base-price-hint">Nhập giá gốc bạn dự định trả cho khách</div>
-        </div>
-
-        <div class="step-nav-row">
-          <button class="btn-back" id="btn-back-step1b">
-            <i class="bi bi-arrow-left-circle-fill"></i> Quay lại
-          </button>
-          <button class="btn-next" id="btn-step2-next">
-            <span>Đánh Giá Tình Trạng</span>
-            <i class="bi bi-arrow-right-circle-fill"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP 3: TÌNH TRẠNG + TRỢ GIÁ + TÍNH GIÁ -->
-      <div class="step-content" id="step-3" style="display:none;">
-        <div class="section-card">
-          <div class="section-header">
-            <i class="bi bi-clipboard-check-fill"></i>
-            <h2>Đánh Giá Tình Trạng</h2>
-          </div>
-
-          <!-- Tình trạng linh kiện / Ngoại hình -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-stars"></i> Tình Trạng Linh Kiện
-            </label>
-            <div class="condition-chips condition-tier-chips" id="condition-chips">
-              <button class="chip tier-chip active" data-value="1.0" data-tier="new">
-                <span class="tier-emoji"><i class="bi bi-star-fill"></i></span>
-                <span>Đẹp như mới</span>
-              </button>
-              <button class="chip tier-chip" data-value="0.95" data-tier="good">
-                <span class="tier-emoji"><i class="bi bi-hand-thumbs-up-fill"></i></span>
-                <span>Cũ đẹp</span>
-              </button>
-              <button class="chip tier-chip" data-value="0.90" data-tier="scratched">
-                <span class="tier-emoji"><i class="bi bi-exclamation-triangle-fill"></i></span>
-                <span>Xước cấn</span>
-              </button>
-              <button class="chip tier-chip" data-value="0.70" data-tier="broken">
-                <span class="tier-emoji"><i class="bi bi-x-octagon-fill"></i></span>
-                <span>Xác</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Lỗi thiết bị -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-exclamation-triangle"></i> Lỗi Phát Hiện
-            </label>
-            <div class="defect-checkboxes">
-              <label class="defect-check" id="dc-man">
-                <input type="checkbox" id="cb-man" />
-                <span class="check-box-custom"></span>
-                <div class="defect-info">
-                  <span class="defect-name"><i class="bi bi-display"></i> Lỗi màn hình <span class="defect-sub-note">(hỗ trợ 15%)</span></span>
-                  <span class="defect-deduct" id="dd-man">-0đ</span>
-                </div>
-              </label>
-              <label class="defect-check" id="dc-pin">
-                <input type="checkbox" id="cb-pin" />
-                <span class="check-box-custom"></span>
-                <div class="defect-info">
-                  <span class="defect-name"><i class="bi bi-battery-half"></i> Pin &lt;85% <span class="defect-sub-note">(hỗ trợ 30%)</span></span>
-                  <span class="defect-deduct" id="dd-pin">-0đ</span>
-                </div>
-              </label>
-              <label class="defect-check" id="dc-vo">
-                <input type="checkbox" id="cb-vo" />
-                <span class="check-box-custom"></span>
-                <div class="defect-info">
-                  <span class="defect-name"><i class="bi bi-phone"></i> Vỏ xước <span class="defect-sub-note">(trừ 100%)</span></span>
-                  <span class="defect-deduct" id="dd-vo">-0đ</span>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- Camera -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-camera"></i> Tình Trạng Camera
-            </label>
-            <div class="condition-chips" id="camera-chips">
-              <button class="chip active" data-camera="0">Bình thường</button>
-              <button class="chip" data-camera="1">1 đốm <span class="chip-sub">-500k</span></button>
-              <button class="chip" data-camera="2">2 đốm <span class="chip-sub">-800k</span></button>
-              <button class="chip" data-camera="3">≥3 đốm <span class="chip-sub" id="chip-camera-3-price">-giá thay</span></button>
-            </div>
-          </div>
-
-          <!-- Phụ kiện -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-box-seam"></i> Phụ Kiện
-            </label>
-            <div class="defect-checkboxes">
-              <label class="defect-check" id="dc-sac">
-                <input type="checkbox" id="cb-sac" />
-                <span class="check-box-custom"></span>
-                <div class="defect-info">
-                  <span class="defect-name"><i class="bi bi-plug"></i> Thiếu sạc <span class="device-sac-note" id="sac-note"></span></span>
-                  <span class="defect-deduct" id="dd-sac">-0đ</span>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- Notes -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-sticky"></i> Ghi Chú Thêm
-            </label>
-            <textarea id="notes-input" class="notes-textarea" placeholder="Ghi chú tình trạng khác..."></textarea>
-          </div>
-        </div>
-
-        <!-- ========== TRỢ GIÁ NHẬP CŨ ========== -->
-        <div class="section-card support-card">
-          <div class="section-header">
-            <i class="bi bi-gift-fill" style="color:var(--success);"></i>
-            <h2>Trợ Giá Nhập Cũ</h2>
-          </div>
-
-          <!-- Hạng thành viên -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-person-badge"></i> Hạng Thành Viên
-            </label>
-            <div class="condition-chips member-chips" id="member-chips">
-              <button class="chip member-chip active" data-member="none">Không</button>
-              <button class="chip member-chip" data-member="snew">
-                <i class="bi bi-person-fill snew-icon"></i>
-                <span>Snew</span>
-                <span class="chip-sub">max 200k</span>
-              </button>
-              <button class="chip member-chip" data-member="smem">
-                <i class="bi bi-star-fill smem-icon"></i>
-                <span>Smem</span>
-                <span class="chip-sub">max 300k</span>
-              </button>
-              <button class="chip member-chip" data-member="svip">
-                <i class="bi bi-gem svip-icon"></i>
-                <span>Svip</span>
-                <span class="chip-sub">max 500k</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Trợ giá thu cũ -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-arrow-repeat"></i> Trợ Giá Thu Cũ <span class="support-pct-badge">tối đa 30%</span>
-            </label>
-            <div class="support-input-row">
-              <div class="support-input-wrap">
-                <input type="text" id="support-tradein" placeholder="0" inputmode="numeric" />
-                <span class="support-unit">đ</span>
-              </div>
-              <span class="support-max-hint" id="support-tradein-max">Tối đa: —</span>
-            </div>
-          </div>
-
-          <!-- Giá máy mới (thu cũ đổi mới) -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-phone-flip"></i> Thu Cũ Đổi Mới <span class="support-pct-badge optional-badge">tùy chọn</span>
-            </label>
-            <div class="support-input-row">
-              <div class="support-input-wrap">
-                <input type="text" id="new-device-price" placeholder="Giá máy mới (nếu có)" inputmode="numeric" />
-                <span class="support-unit">đ</span>
-              </div>
-              <span class="support-max-hint" id="new-device-discount-info">Chiết khấu: —</span>
-            </div>
-          </div>
-
-          <!-- Trợ giá khác -->
-          <div class="condition-section">
-            <label class="condition-label">
-              <i class="bi bi-cash-coin"></i> Trợ Giá Khác
-            </label>
-            <div class="support-grid">
-              <div class="support-field">
-                <label>Ngành hàng</label>
-                <div class="support-input-wrap compact">
-                  <input type="text" id="support-category" placeholder="0" inputmode="numeric" />
-                  <span class="support-unit">đ</span>
-                </div>
-              </div>
-              <div class="support-field">
-                <label>Từ AM</label>
-                <div class="support-input-wrap compact">
-                  <input type="text" id="support-am" placeholder="0" inputmode="numeric" />
-                  <span class="support-unit">đ</span>
-                </div>
-              </div>
-              <div class="support-field">
-                <label>Phương thức TT</label>
-                <div class="support-input-wrap compact">
-                  <input type="text" id="support-payment" placeholder="0" inputmode="numeric" />
-                  <span class="support-unit">đ</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- LIVE PRICE DISPLAY -->
-        <div class="price-result-card" id="price-result-card">
-          <div class="price-result-header">
-            <span class="price-result-label"><i class="bi bi-cash-coin" style="color:#ffd700;"></i> GIÁ NHẬP MÁY</span>
-            <span class="price-result-model" id="pr-model"></span>
-          </div>
-
-          <div class="price-breakdown">
-            <div class="pb-row" id="pbr-base">
-              <span>Giá cơ sở</span>
-              <span id="pb-base">0đ</span>
-            </div>
-            <div class="pb-row condition-row" id="pbr-condition">
-              <span>Tình trạng <span class="condition-pct" id="pb-condition-pct">Đẹp như mới</span></span>
-              <span id="pb-condition-val">0đ</span>
-            </div>
-            <div class="pb-deducts" id="pb-deducts">
-              <!-- Dynamic deduct rows -->
-            </div>
-          </div>
-
-          <!-- Trợ giá breakdown -->
-          <div class="pb-supports" id="pb-supports" style="display:none;">
-            <div class="pb-supports-title"><i class="bi bi-tags-fill"></i> Trợ giá</div>
-            <!-- Dynamic support rows -->
-          </div>
-
-          <div class="price-final-row">
-            <span class="price-final-label">GIÁ TRẢ KHÁCH</span>
-            <span class="price-final-value" id="pb-final">0đ</span>
-          </div>
-
-          <!-- Chiết khấu máy mới (nếu có) -->
-          <div class="pb-newdevice-row" id="pb-newdevice-row" style="display:none;">
-            <span class="pb-newdevice-label"><i class="bi bi-gift-fill"></i> Chiết khấu máy mới</span>
-            <span class="pb-newdevice-value" id="pb-newdevice-val">0đ</span>
-          </div>
-        </div>
-
-        <div class="step-nav-row">
-          <button class="btn-back" id="btn-back-step2">
-            <i class="bi bi-arrow-left-circle-fill"></i> Quay lại
-          </button>
-          <div class="action-buttons">
-            <button class="btn-confirm" id="btn-confirm">
-              <i class="bi bi-check-circle-fill"></i>
-              CHỐT KHÁCH
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- NEW INTAKE BUTTON (show after confirm) -->
-      <div id="new-intake-banner" style="display:none;" class="new-intake-banner">
-        <div class="success-anim">✅</div>
-        <h3>Đã lưu giao dịch!</h3>
-        <p>Máy đã được lưu vào hệ thống</p>
-        <button class="btn-new-intake" id="btn-new-intake">
-          <i class="bi bi-plus-circle-fill"></i> Nhập Máy Mới
-        </button>
-        <button class="btn-view-bill" id="btn-view-bill-after">
-          <i class="bi bi-printer-fill"></i> Xem Lại Bill
-        </button>
-      </div>
-
-    </div>
-    <!-- END TAB INTAKE -->
-
-    <!-- ========== TAB: LỊCH SỬ ========== -->
-    <div class="tab-pane" id="tab-history" style="display:none;">
-      <div class="section-card">
-        <div class="section-header">
-          <i class="bi bi-clock-history"></i>
-          <h2>Lịch Sử Giao Dịch</h2>
-        </div>
-
-        <!-- Search filters -->
-        <div class="history-filters">
-          <div class="filter-field">
-            <i class="bi bi-telephone"></i>
-            <input type="text" id="filter-phone" placeholder="Tìm theo SĐT..." />
-          </div>
-          <div class="filter-field">
-            <i class="bi bi-phone"></i>
-            <input type="text" id="filter-model" placeholder="Tìm theo model..." />
-          </div>
-          <div class="filter-field">
-            <i class="bi bi-calendar3"></i>
-            <input type="date" id="filter-date" />
-          </div>
-          <button class="btn-filter-search" id="btn-history-search">
-            <i class="bi bi-search"></i> Tìm
-          </button>
-          <button class="btn-filter-clear" id="btn-history-clear">
-            <i class="bi bi-x-circle"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- History list -->
-      <div id="history-list" class="history-list">
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <span>Đang tải...</span>
-        </div>
-      </div>
-
-      <!-- Pagination -->
-      <div class="history-pagination" id="history-pagination" style="display:none;">
-        <button id="btn-prev-page" class="btn-page"><i class="bi bi-chevron-left"></i></button>
-        <span id="page-info">Trang 1 / 1</span>
-        <button id="btn-next-page" class="btn-page"><i class="bi bi-chevron-right"></i></button>
+  <!-- ============================================================
+       SIDE PANEL (RIGHT) - LIVE RECEIPT PREVIEW
+       ============================================================ -->
+  <aside class="fixed right-0 top-0 h-[calc(100vh-56px)] lg:h-[calc(100vh-64px)] w-[380px] z-30 hidden lg:flex flex-col p-6 bg-surface-container-high/60 backdrop-blur-3xl border-l border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.2)] mt-14 lg:mt-16" id="right-bill-sidebar">
+    <div class="flex items-center gap-2 mb-8">
+      <span class="material-symbols-outlined text-primary">receipt_long</span>
+      <div>
+        <h2 class="font-outfit text-lg font-bold text-primary">Định Giá</h2>
+        <p class="text-[10px] font-semibold tracking-widest text-on-surface-variant uppercase">Thời gian thực</p>
       </div>
     </div>
-    <!-- END TAB HISTORY -->
-
-    <!-- ========== TAB: DASHBOARD ========== -->
-    <div class="tab-pane" id="tab-dashboard" style="display:none;">
-      <!-- Date selector -->
-      <div class="section-card">
-        <div class="dashboard-header-row">
-          <div class="section-header" style="margin:0;">
-            <i class="bi bi-bar-chart-fill"></i>
-            <h2>Thống Kê</h2>
+    
+    <!-- Summary Items Scrollable Area -->
+    <div class="flex-1 overflow-y-auto pr-1 space-y-4">
+      <div class="space-y-3">
+        <!-- Model Display -->
+        <div class="flex justify-between items-start text-sm border-b border-white/5 pb-2">
+          <span class="text-on-surface-variant font-medium">Model Thiết Bị</span>
+          <span class="font-bold text-right text-primary max-w-[200px] truncate" id="pr-model">—</span>
+        </div>
+        
+        <!-- Base Price Display -->
+        <div class="flex justify-between items-center text-sm border-b border-white/5 pb-2">
+          <span class="text-on-surface-variant font-medium">Giá Cơ Sở</span>
+          <span class="font-semibold text-on-surface" id="pb-base">0đ</span>
+        </div>
+        
+        <!-- Physical Condition Display -->
+        <div class="flex justify-between items-start text-sm border-b border-white/5 pb-2">
+          <span class="text-on-surface-variant font-medium">Tình Trạng (Ngoại hình)</span>
+          <div class="text-right">
+            <span class="font-semibold text-emerald block" id="pb-condition-pct">VN newseal</span>
+            <span class="text-xs text-on-surface-variant" id="pb-condition-val">0đ</span>
           </div>
-          <div class="dash-date-wrap">
-            <input type="date" id="dash-date" class="dash-date-input" />
+        </div>
+        
+        <!-- Dynamic Deduct List -->
+        <div class="space-y-2" id="pb-deducts-container">
+          <div class="text-xs text-coral font-semibold uppercase tracking-wider mt-3">Lỗi &amp; Khấu Trừ</div>
+          <div class="space-y-2 text-sm max-h-[140px] overflow-y-auto pr-1" id="pb-deducts">
+            <div class="flex justify-between text-on-surface-variant"><span class="italic text-xs">Không có khấu trừ</span><span>0đ</span></div>
           </div>
         </div>
-      </div>
 
-      <!-- Stats cards -->
-      <div class="stats-grid">
-        <div class="stat-card stat-blue">
-          <div class="stat-icon"><i class="bi bi-phone-fill"></i></div>
-          <div class="stat-value" id="stat-count">—</div>
-          <div class="stat-label">Số máy nhập</div>
+        <!-- Dynamic Supports List -->
+        <div class="space-y-2 pt-2 border-t border-white/5" id="pb-supports">
+          <div class="text-xs text-emerald font-semibold uppercase tracking-wider">Ưu Đãi / Trợ Giá</div>
+          <div class="space-y-2 text-sm" id="pb-supports-list">
+            <!-- Rendered by JS -->
+          </div>
         </div>
-        <div class="stat-card stat-green">
-          <div class="stat-icon"><i class="bi bi-cash-stack"></i></div>
-          <div class="stat-value" id="stat-total">—</div>
-          <div class="stat-label">Tổng tiền nhập</div>
-        </div>
-        <div class="stat-card stat-purple">
-          <div class="stat-icon"><i class="bi bi-graph-up"></i></div>
-          <div class="stat-value" id="stat-avg">—</div>
-          <div class="stat-label">Giá trung bình</div>
-        </div>
-      </div>
-
-      <!-- Top staff (admin only) -->
-      <div class="section-card admin-only" id="top-staff-card">
-        <div class="section-header">
-          <i class="bi bi-trophy-fill"></i>
-          <h2>Top Nhân Viên Hôm Nay</h2>
-        </div>
-        <div id="top-staff-list" class="top-staff-list">
-          <div class="loading-state"><div class="spinner"></div></div>
-        </div>
-      </div>
-
-      <!-- Device breakdown -->
-      <div class="section-card">
-        <div class="section-header">
-          <i class="bi bi-pie-chart-fill"></i>
-          <h2>Theo Loại Thiết Bị</h2>
-        </div>
-        <div id="device-breakdown" class="device-breakdown-list">
-          <div class="loading-state"><div class="spinner"></div></div>
-        </div>
-      </div>
-
-      <!-- Recent transactions -->
-      <div class="section-card">
-        <div class="section-header">
-          <i class="bi bi-list-ul"></i>
-          <h2>Giao Dịch Gần Đây</h2>
-        </div>
-        <div id="dash-recent" class="history-list compact">
-          <div class="loading-state"><div class="spinner"></div></div>
+        
+        <!-- New Device Discount -->
+        <div class="flex justify-between items-center text-sm pt-2 border-t border-white/5 text-emerald" id="pb-newdevice-row" style="display:none;">
+          <span class="font-medium flex items-center gap-1.5"><i class="bi bi-gift-fill"></i> Chiết khấu máy mới</span>
+          <span class="font-bold" id="pb-newdevice-val">0đ</span>
         </div>
       </div>
     </div>
-    <!-- END TAB DASHBOARD -->
-
-    <!-- ========== TAB: SETTINGS (ADMIN ONLY) ========== -->
-    <div class="tab-pane" id="tab-settings" style="display:none;">
-      <div class="section-card">
-        <div class="section-header">
-          <i class="bi bi-people-fill"></i>
-          <h2>Quản Lý Nhân Viên</h2>
-        </div>
-        <div id="staff-list" class="staff-list">
-          <div class="loading-state"><div class="spinner"></div></div>
-        </div>
-        <button class="btn-add-staff" id="btn-add-staff">
-          <i class="bi bi-person-plus-fill"></i> Thêm Nhân Viên
-        </button>
-      </div>
-    </div>
-    <!-- END TAB SETTINGS -->
-
-  </main>
-
-</div>
-<!-- END APP SCREEN -->
-
-<!-- ============================================================
-     BILL MODAL
-     ============================================================ -->
-<div class="modal-overlay" id="bill-modal" style="display:none;">
-  <div class="bill-modal-container">
-    <!-- Print area -->
-    <div class="bill-print-area" id="bill-print-area">
-      <div class="bill-header">
-        <div class="bill-logo">📱</div>
-        <div class="bill-shop-name">MOBILE SHOP</div>
-        <div class="bill-shop-sub">Mua Bán - Thu Mua Điện Thoại</div>
-        <div class="bill-divider"></div>
-      </div>
-
-      <div class="bill-meta">
-        <div class="bill-meta-row">
-          <span>Mã GD:</span>
-          <strong id="bill-id">#0000</strong>
-        </div>
-        <div class="bill-meta-row">
-          <span>Ngày:</span>
-          <strong id="bill-date">—</strong>
-        </div>
-        <div class="bill-meta-row">
-          <span>NV:</span>
-          <strong id="bill-staff">—</strong>
-        </div>
-      </div>
-
-      <div class="bill-divider dashed"></div>
-
-      <div class="bill-customer">
-        <div class="bill-section-title">KHÁCH HÀNG</div>
-        <div class="bill-meta-row">
-          <span>Tên:</span>
-          <strong id="bill-customer-name">—</strong>
-        </div>
-        <div class="bill-meta-row">
-          <span>SĐT:</span>
-          <strong id="bill-customer-phone">—</strong>
-        </div>
-      </div>
-
-      <div class="bill-divider dashed"></div>
-
-      <div class="bill-device">
-        <div class="bill-section-title">THIẾT BỊ</div>
-        <div class="bill-meta-row">
-          <span>Loại:</span>
-          <strong id="bill-device-type">—</strong>
-        </div>
-        <div class="bill-meta-row">
-          <span>Model:</span>
-          <strong id="bill-model">—</strong>
-        </div>
-        <div class="bill-meta-row">
-          <span>Ngoại hình:</span>
-          <strong id="bill-condition">—</strong>
-        </div>
-      </div>
-
-      <div class="bill-divider dashed"></div>
-
-      <div class="bill-price-detail">
-        <div class="bill-section-title">CHI TIẾT GIÁ</div>
-        <div id="bill-deduct-list" class="bill-deduct-list">
-          <!-- Dynamic rows -->
-        </div>
-      </div>
-
-      <div class="bill-divider"></div>
-
-      <div class="bill-total-row">
-        <span class="bill-total-label">GIÁ NHẬP</span>
-        <span class="bill-total-value" id="bill-final-price">0đ</span>
-      </div>
-
-      <div class="bill-notes-section" id="bill-notes-wrap" style="display:none;">
-        <div class="bill-divider dashed"></div>
-        <div class="bill-section-title">GHI CHÚ</div>
-        <div id="bill-notes-text" class="bill-notes-text"></div>
-      </div>
-
-      <div class="bill-divider dashed"></div>
-      <div class="bill-footer">
-        <p>Cảm ơn quý khách đã tin tưởng!</p>
-        <p class="bill-footer-sub">Hotline: 0900 000 000</p>
-      </div>
-    </div>
-
-    <!-- Modal action buttons (no print) -->
-    <div class="bill-actions no-print">
-      <button class="btn-bill-edit" id="btn-bill-edit">
-        <i class="bi bi-pencil-square"></i> Sửa
-      </button>
-      <button class="btn-bill-print" id="btn-bill-print">
-        <i class="bi bi-printer-fill"></i> In
-      </button>
-      <button class="btn-bill-pdf" id="btn-bill-pdf">
-        <i class="bi bi-file-earmark-pdf-fill"></i> PDF
-      </button>
-      <button class="btn-bill-close" id="btn-bill-close">
-        <i class="bi bi-x-circle-fill"></i> Đóng
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     PROFILE BOTTOM SHEET
-     ============================================================ -->
-<div class="bottom-sheet-overlay" id="profile-sheet-overlay" style="display:none;">
-  <div class="bottom-sheet" id="profile-bottom-sheet">
-    <div class="bs-drag-handle"></div>
-    <div class="bs-content">
-      <div class="profile-info-large">
-        <div class="profile-avatar-large">
-          <i class="bi bi-person-fill"></i>
-        </div>
-        <div class="profile-details-large">
-          <span id="sheet-user-name">Loading...</span>
-          <span class="role-badge" id="sheet-user-role">NV</span>
-        </div>
+    
+    <!-- Total & Confirmation Action -->
+    <div class="mt-auto pt-6 border-t border-white/10">
+      <div class="mb-4">
+        <p class="text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">TỔNG THU DỰ KIẾN</p>
+        <p class="font-outfit text-3xl font-bold text-primary tracking-tight" id="pb-final">0đ</p>
       </div>
       
-      <div class="bs-actions">
-        <button class="btn-logout-full" id="btn-logout-sheet">
-          <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+      <!-- Actions -->
+      <div class="flex gap-2">
+        <button class="flex-1 gradient-btn text-white text-xs font-semibold uppercase py-4 rounded-lg flex justify-center items-center gap-2 shadow-[0_4px_20px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_25px_rgba(59,130,246,0.5)] transition-all" id="btn-confirm">
+          <span class="material-symbols-outlined">save</span>
+          Lưu Giao Dịch
+        </button>
+        <button class="w-14 bg-surface-container-high/60 border border-white/5 rounded-lg text-on-surface hover:text-primary transition-colors flex items-center justify-center group" id="btn-copy-bill" title="Sao chép tình trạng">
+          <span class="material-symbols-outlined text-xl group-active:scale-90 transition-transform">content_copy</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN CONTENT CONTAINER
+       ============================================================ -->
+  <main class="ml-0 mt-14 lg:mt-16 p-4 lg:p-8 pb-24 lg:pb-8 h-[calc(100vh-56px)] lg:h-[calc(100vh-64px)] overflow-y-auto relative z-10 lg:mr-[380px]" id="main-content-area">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- ============================================================
+           TAB 1: NHẬP MÁY (INTAKE FORM)
+           ============================================================ -->
+      <div class="tab-pane space-y-8" id="tab-intake">
+        
+        <!-- Header -->
+        <div>
+          <h1 class="text-2xl font-outfit font-bold text-primary mb-2">Thông Tin Thiết Bị</h1>
+          <p class="text-sm text-on-surface-variant">Nhập chi tiết tình trạng để hệ thống định giá tự động.</p>
+        </div>
+
+        <!-- Main Form Area -->
+        <div class="space-y-6" id="intake-main-form">
+          <!-- Step 1 Layout: Brand & Model selection -->
+          <div class="glass-card p-6 rounded-xl space-y-6" id="step-1">
+            <label class="text-xs font-semibold text-primary uppercase tracking-wider mb-4 block">Tìm Kiếm Model</label>
+            
+            <!-- Brand Grid -->
+            <div class="space-y-2">
+              <div class="grid grid-cols-4 md:grid-cols-7 gap-2.5" id="device-type-grid">
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs active" data-type="iPhone">
+                  <span class="text-lg mb-1"><i class="bi bi-apple"></i></span>
+                  <span>iPhone</span>
+                </button>
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs" data-type="Android">
+                  <span class="text-lg mb-1"><i class="bi bi-android2"></i></span>
+                  <span>Android</span>
+                </button>
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs" data-type="MacBook">
+                  <span class="text-lg mb-1"><i class="bi bi-laptop"></i></span>
+                  <span>MacBook</span>
+                </button>
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs" data-type="iPad">
+                  <span class="text-lg mb-1"><i class="bi bi-tablet"></i></span>
+                  <span>iPad</span>
+                </button>
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs" data-type="Watch">
+                  <span class="text-lg mb-1"><i class="bi bi-smartwatch"></i></span>
+                  <span>Watch</span>
+                </button>
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs" data-type="AirPods">
+                  <span class="text-lg mb-1"><i class="bi bi-earbuds"></i></span>
+                  <span>AirPods</span>
+                </button>
+                <button class="device-btn py-3 px-2 rounded-xl flex flex-col items-center justify-center text-xs" data-type="Mac mini">
+                  <span class="text-lg mb-1"><i class="bi bi-pc-display"></i></span>
+                  <span>Mac mini</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Model Autocomplete Input -->
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+              <input class="w-full bg-surface-container/50 border border-white/10 rounded-lg py-4 pl-12 pr-12 text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all text-on-surface placeholder:text-on-surface-variant/50" id="model-input" placeholder="VD: iPhone 14 Pro Max 256GB..." autocomplete="off" type="text"/>
+              <button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60 hover:text-white" id="clear-model" style="display:none;" type="button">
+                <i class="bi bi-x-circle-fill text-lg"></i>
+              </button>
+              <!-- Autocomplete dropdown list -->
+              <div class="autocomplete-dropdown" id="autocomplete-list" style="display:none;"></div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="space-y-1">
+              <span class="text-[10px] text-on-surface-variant/60 uppercase tracking-wider block mb-1">Gợi ý nhanh:</span>
+              <div class="flex flex-wrap gap-2" id="quick-models">
+                <!-- Injected dynamically by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 Layout: Reference Prices & Base Price Entry -->
+          <div class="glass-card p-6 rounded-xl space-y-6" id="step-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-primary uppercase tracking-wider">Giá Linh Kiện &amp; Giá Nhập Gốc</label>
+              <div class="text-xs text-on-surface-variant/60 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">info</span>
+                <span>Giá linh kiện lấy từ Điện Thoại Vui</span>
+              </div>
+            </div>
+
+            <!-- Price Loading Screen -->
+            <div id="price-loading" class="flex flex-col items-center justify-center py-8 gap-3" style="display:none;">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span class="text-xs text-on-surface-variant font-medium">Đang truy vấn dữ liệu từ Điện Thoại Vui...</span>
+            </div>
+
+            <!-- Price Error Banner -->
+            <div id="price-error-block" class="bg-coral/10 border border-coral/20 rounded-xl p-4 flex items-start gap-3" style="display:none;">
+              <span class="material-symbols-outlined text-coral">warning</span>
+              <div>
+                <span class="text-xs font-semibold text-coral block mb-0.5">Không Lấy Được Giá Tự Động</span>
+                <span class="text-xs text-on-surface-variant" id="price-error-msg">Nhập giá trị linh kiện thủ công bên dưới để tiếp tục.</span>
+              </div>
+            </div>
+
+            <!-- Reference Price Grid -->
+            <div id="price-cards" class="space-y-4" style="display:none;">
+              <div class="text-[11px] font-semibold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-emerald">check_circle</span>
+                <span>Dòng máy trùng khớp:</span>
+                <span class="text-on-surface normal-case font-normal" id="price-model-found"></span>
+              </div>
+              
+              <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between" id="pc-pin">
+                  <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><i class="bi bi-battery-charging text-emerald/80"></i> Pin</span>
+                  <span class="text-sm font-bold text-on-surface mt-1" id="pv-pin">—</span>
+                  <span class="text-[9px] text-on-surface-variant/50 line-clamp-1 mt-1" id="pn-pin" style="display:none;"></span>
+                </div>
+                <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between" id="pc-man">
+                  <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><i class="bi bi-phone text-emerald/80"></i> Màn</span>
+                  <span class="text-sm font-bold text-on-surface mt-1" id="pv-man">—</span>
+                  <span class="text-[9px] text-on-surface-variant/50 line-clamp-1 mt-1" id="pn-man" style="display:none;"></span>
+                </div>
+                <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between" id="pc-camera">
+                  <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><i class="bi bi-camera text-emerald/80"></i> Cam</span>
+                  <span class="text-sm font-bold text-on-surface mt-1" id="pv-camera">—</span>
+                  <span class="text-[9px] text-on-surface-variant/50 line-clamp-1 mt-1" id="pn-camera" style="display:none;"></span>
+                </div>
+                <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between" id="pc-vo">
+                  <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><i class="bi bi-phone-flip text-emerald/80"></i> Vỏ</span>
+                  <span class="text-sm font-bold text-on-surface mt-1" id="pv-vo">—</span>
+                  <span class="text-[9px] text-on-surface-variant/50 line-clamp-1 mt-1" id="pn-vo" style="display:none;"></span>
+                </div>
+                <div class="glass-card p-3.5 rounded-xl flex flex-col justify-between" id="pc-sac">
+                  <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><i class="bi bi-plug text-emerald/80"></i> Sạc</span>
+                  <span class="text-sm font-bold text-on-surface mt-1" id="pv-sac">—</span>
+                  <span class="text-[9px] text-on-surface-variant/50 line-clamp-1 mt-1" id="pn-sac" style="display:none;"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Manual Overrides -->
+            <div class="space-y-3">
+              <button class="flex items-center gap-1 text-xs text-on-surface-variant hover:text-primary transition-colors focus:outline-none" id="btn-toggle-manual" type="button">
+                <span>Tuỳ chỉnh giá linh kiện thủ công</span>
+                <span class="material-symbols-outlined text-base">expand_more</span>
+              </button>
+              
+              <div id="manual-prices-form" class="bg-surface-container/30 border border-white/5 rounded-xl p-4 space-y-4" style="display:none;">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <div>
+                    <label class="text-[10px] text-on-surface-variant uppercase font-semibold">Thay Pin</label>
+                    <input class="w-full bg-surface-container/60 border border-white/10 rounded-lg p-2.5 text-xs text-on-surface" id="mp-pin" placeholder="0" inputmode="numeric" type="text"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-on-surface-variant uppercase font-semibold">Thay Màn</label>
+                    <input class="w-full bg-surface-container/60 border border-white/10 rounded-lg p-2.5 text-xs text-on-surface" id="mp-man" placeholder="0" inputmode="numeric" type="text"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-on-surface-variant uppercase font-semibold">Thay Cam</label>
+                    <input class="w-full bg-surface-container/60 border border-white/10 rounded-lg p-2.5 text-xs text-on-surface" id="mp-camera" placeholder="0" inputmode="numeric" type="text"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-on-surface-variant uppercase font-semibold">Thay Vỏ</label>
+                    <input class="w-full bg-surface-container/60 border border-white/10 rounded-lg p-2.5 text-xs text-on-surface" id="mp-vo" placeholder="0" inputmode="numeric" type="text"/>
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-on-surface-variant uppercase font-semibold">Thay Sạc</label>
+                    <input class="w-full bg-surface-container/60 border border-white/10 rounded-lg p-2.5 text-xs text-on-surface" id="mp-sac" placeholder="0" inputmode="numeric" type="text"/>
+                  </div>
+                </div>
+                <button class="px-4 py-2 bg-primary-container text-on-primary-container rounded-lg text-xs font-semibold hover:bg-primary-container/80 transition-colors flex items-center gap-1.5" id="btn-apply-manual" type="button">
+                  <span class="material-symbols-outlined text-sm">done</span>
+                  Áp dụng giá thủ công
+                </button>
+              </div>
+            </div>
+
+            <!-- Base Price (Main Input) -->
+            <div class="bg-surface-container/20 border border-white/5 rounded-xl p-5 space-y-3">
+              <label class="text-xs font-semibold text-primary uppercase tracking-wider block">3. Nhập giá gốc của máy lúc đẹp (Giá cơ sở)</label>
+              <div class="relative max-w-md">
+                <input class="w-full bg-surface-container/50 border border-white/10 rounded-xl py-3.5 px-4 text-lg font-bold text-white focus:outline-none focus:border-primary/50 text-right pr-12 focus:ring-1 focus:ring-primary/50" id="base-price" placeholder="0" inputmode="numeric" type="text"/>
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface font-semibold">đ</span>
+              </div>
+              <p class="text-xs text-on-surface-variant/60">Hệ thống sẽ dựa vào giá này và trừ dần tiền lỗi hoặc cộng thêm trợ giá.</p>
+            </div>
+          </div>
+
+          <!-- Step 3 Layout: Conditions & Defects -->
+          <div class="glass-card p-6 rounded-xl space-y-6" id="step-3">
+            <label class="text-xs font-semibold text-primary uppercase tracking-wider mb-4 block">Tình Trạng Ngoại Hình</label>
+
+            <!-- Tình Trạng Linh Kiện -->
+            <div class="space-y-3">
+              <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">A. Tình trạng linh kiện ngoại hình</label>
+              <div class="grid grid-cols-3 gap-4" id="condition-chips">
+                <button class="chip tier-chip py-3.5 px-3 rounded-xl flex flex-col items-center justify-center active text-center" data-value="1.0" data-tier="vn_newseal">
+                  <span class="font-bold text-xs">VN newseal</span>
+                </button>
+                <button class="chip tier-chip py-3.5 px-3 rounded-xl flex flex-col items-center justify-center text-center" data-value="1.0" data-tier="vn_fullbox_90d">
+                  <span class="font-bold text-xs">VN fullbox kích hoạt &le; 90 ngày</span>
+                </button>
+                <button class="chip tier-chip py-3.5 px-3 rounded-xl flex flex-col items-center justify-center text-center" data-value="1.0" data-tier="good">
+                  <span class="font-bold text-xs">Giá nhập cũ đẹp</span>
+                </button>
+                <button class="chip tier-chip py-3.5 px-3 rounded-xl flex flex-col items-center justify-center text-center" data-value="1.0" data-tier="scratched">
+                  <span class="font-bold text-xs">Ngoại hình trầy xước</span>
+                </button>
+                <button class="chip tier-chip py-3.5 px-3 rounded-xl flex flex-col items-center justify-center text-center" data-value="1.0" data-tier="dented">
+                  <span class="font-bold text-xs">Ngoại hình xước cấn</span>
+                </button>
+                <button class="chip tier-chip py-3.5 px-3 rounded-xl flex flex-col items-center justify-center text-center" data-value="1.0" data-tier="bad_but_working">
+                  <span class="font-bold text-[10px] leading-tight">Máy hoạt động bình thường, ngoại hình xấu màn còn hiển thị &amp; cảm ứng được</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lỗi Thiết Bị -->
+            <div class="space-y-3">
+              <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">B. Quét lỗi phát hiện &amp; Khấu trừ</label>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="defect-checkboxes-container">
+                <label class="defect-card glass-card p-4 rounded-xl flex justify-between items-center cursor-pointer" id="dc-man">
+                  <div class="flex items-center gap-3">
+                    <input class="rounded border-white/10 bg-surface-container text-primary focus:ring-0 focus:ring-offset-0 focus:outline-none" id="cb-man" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-on-surface flex items-center gap-1"><i class="bi bi-display"></i> Màn hình</span>
+                      <span class="text-[10px] text-on-surface-variant/60">Trợ giá 15%</span>
+                    </div>
+                  </div>
+                  <span class="text-xs font-bold text-coral" id="dd-man">-0đ</span>
+                </label>
+                
+                <label class="defect-card glass-card p-4 rounded-xl flex justify-between items-center cursor-pointer" id="dc-pin">
+                  <div class="flex items-center gap-3">
+                    <input class="rounded border-white/10 bg-surface-container text-primary focus:ring-0 focus:ring-offset-0 focus:outline-none" id="cb-pin" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-on-surface flex items-center gap-1"><i class="bi bi-battery-half"></i> Pin &lt;85%</span>
+                      <span class="text-[10px] text-on-surface-variant/60">Trợ giá 30%</span>
+                    </div>
+                  </div>
+                  <span class="text-xs font-bold text-coral" id="dd-pin">-0đ</span>
+                </label>
+                
+                <label class="defect-card glass-card p-4 rounded-xl flex justify-between items-center cursor-pointer" id="dc-vo">
+                  <div class="flex items-center gap-3">
+                    <input class="rounded border-white/10 bg-surface-container text-primary focus:ring-0 focus:ring-offset-0 focus:outline-none" id="cb-vo" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-on-surface flex items-center gap-1"><i class="bi bi-phone"></i> Vỏ xước</span>
+                      <span class="text-[10px] text-on-surface-variant/60">Trừ 100%</span>
+                    </div>
+                  </div>
+                  <span class="text-xs font-bold text-coral" id="dd-vo">-0đ</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Tình trạng camera -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">C. Số Đốm Camera</label>
+                <div class="grid grid-cols-4 gap-2" id="camera-chips">
+                  <button class="chip py-2 px-1 rounded-lg text-xs font-semibold active" data-camera="0">Bình thường</button>
+                  <button class="chip py-2 px-1 rounded-lg text-xs font-semibold" data-camera="1">1 đốm</button>
+                  <button class="chip py-2 px-1 rounded-lg text-xs font-semibold" data-camera="2">2 đốm</button>
+                  <button class="chip py-2 px-1 rounded-lg text-xs font-semibold" data-camera="3">3+ đốm</button>
+                </div>
+                <div class="text-[10px] text-on-surface-variant/50 flex justify-between mt-1">
+                  <span>1 đốm: -500k</span>
+                  <span>2 đốm: -800k</span>
+                  <span id="chip-camera-3-price">3+ đốm: -giá thay</span>
+                </div>
+              </div>
+
+              <!-- Phụ kiện thiếu -->
+              <div class="space-y-2">
+                <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">D. Tình trạng sạc phụ kiện</label>
+                <label class="defect-card glass-card p-3.5 rounded-xl flex justify-between items-center cursor-pointer" id="dc-sac">
+                  <div class="flex items-center gap-2.5">
+                    <input class="rounded border-white/10 bg-surface-container text-primary focus:ring-0 focus:ring-offset-0 focus:outline-none" id="cb-sac" type="checkbox"/>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-on-surface flex items-center gap-1"><i class="bi bi-plug"></i> Thiếu sạc zin</span>
+                      <span class="text-[10px] text-on-surface-variant/60" id="sac-note">Khấu trừ sạc máy...</span>
+                    </div>
+                  </div>
+                  <span class="text-xs font-bold text-coral" id="dd-sac">-0đ</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Ghi Chú -->
+            <div class="space-y-2">
+              <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">E. Ghi chú lỗi khác</label>
+              <textarea class="w-full bg-surface-container/30 border border-white/8 rounded-xl p-3.5 text-xs text-white focus:outline-none focus:border-primary/50 placeholder:text-on-surface-variant/40" id="notes-input" placeholder="Mô tả cụ thể các chi tiết khác bên ngoài (VD: nứt lưng, rung hỏng...)" rows="2"></textarea>
+            </div>
+          </div>
+
+          <!-- Trade-in Supports Card -->
+          <div class="glass-card p-6 rounded-xl space-y-6 border-emerald/20" id="step-supports">
+            <label class="text-xs font-semibold text-emerald uppercase tracking-wider mb-4 block flex items-center gap-2">
+              <span class="material-symbols-outlined">loyalty</span> Trợ Giá Thu Cũ
+            </label>
+
+            <!-- Hạng Thành Viên -->
+            <div class="space-y-3">
+              <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">1. Khách hàng thân thiết (Thành viên)</label>
+              <div class="grid grid-cols-4 gap-2" id="member-chips">
+                <button class="chip py-3.5 px-2 rounded-xl text-center active" data-member="none">
+                  <span class="block font-bold text-xs">Không</span>
+                </button>
+                <button class="chip py-3.5 px-2 rounded-xl text-center" data-member="snew">
+                  <span class="block font-bold text-xs flex items-center justify-center gap-1"><i class="bi bi-person-fill text-blue-400"></i> Snew</span>
+                  <span class="text-[9px] text-on-surface-variant/60">max 200k</span>
+                </button>
+                <button class="chip py-3.5 px-2 rounded-xl text-center" data-member="smem">
+                  <span class="block font-bold text-xs flex items-center justify-center gap-1"><i class="bi bi-star-fill text-yellow-400"></i> Smem</span>
+                  <span class="text-[9px] text-on-surface-variant/60">max 300k</span>
+                </button>
+                <button class="chip py-3.5 px-2 rounded-xl text-center" data-member="svip">
+                  <span class="block font-bold text-xs flex items-center justify-center gap-1"><i class="bi bi-gem text-purple-400"></i> Svip</span>
+                  <span class="text-[9px] text-on-surface-variant/60">max 500k</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Thu Cũ Đổi Mới -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Trợ Giá Thu Cũ % + Cap -->
+              <div class="space-y-2">
+                <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">2. Trợ Giá Thu Cũ</label>
+                <div class="bg-surface-container/30 border border-white/5 rounded-xl p-4 space-y-3">
+                  <!-- Cap Limits -->
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-on-surface-variant">Giới hạn tối đa:</span>
+                    <div class="flex items-center gap-1.5">
+                      <input class="bg-surface-container border-white/10 rounded px-2 py-0.5 w-[90px] text-xs text-right font-semibold text-white focus:ring-0 focus:outline-none" id="support-tradein-max-input" value="3.000.000" type="text"/>
+                      <span class="text-[10px] text-on-surface-variant">đ</span>
+                    </div>
+                  </div>
+                  <div class="flex gap-1.5">
+                    <button class="chip max-chip text-[10px] py-1 px-2.5 rounded-full flex-1" data-val="1000000" type="button">1tr</button>
+                    <button class="chip max-chip text-[10px] py-1 px-2.5 rounded-full flex-1" data-val="2000000" type="button">2tr</button>
+                    <button class="chip max-chip text-[10px] py-1 px-2.5 rounded-full flex-1" data-val="3000000" type="button">3tr</button>
+                  </div>
+                  <!-- Pct Input -->
+                  <div class="relative">
+                    <input class="w-full bg-surface-container/50 border border-white/8 rounded-lg py-2.5 px-3 text-xs font-semibold focus:outline-none focus:border-primary/50 text-right pr-8" id="support-tradein-pct" placeholder="Nhập tỷ lệ % trợ giá (VD: 30)" inputmode="numeric" type="text"/>
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold text-xs">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chiết Khấu Máy Mới -->
+              <div class="space-y-2">
+                <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">3. Giá máy mới đổi mới (tùy chọn)</label>
+                <div class="bg-surface-container/30 border border-white/5 rounded-xl p-4 flex flex-col justify-between h-[126px]">
+                  <div class="relative">
+                    <input class="w-full bg-surface-container/50 border border-white/8 rounded-lg py-2.5 px-3 text-xs font-semibold focus:outline-none focus:border-primary/50 text-right pr-8" id="new-device-price" placeholder="Nhập giá máy mới..." inputmode="numeric" type="text"/>
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold text-xs">đ</span>
+                  </div>
+                  <span class="text-[10px] text-emerald font-semibold" id="new-device-discount-info">Chiết khấu: —</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Supports -->
+            <div class="space-y-2">
+              <label class="text-[11px] font-semibold text-primary uppercase tracking-wider block">4. Trợ giá đặc biệt khác</label>
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-surface-container/20 border border-white/5 rounded-xl p-3">
+                  <label class="text-[9px] text-on-surface-variant uppercase font-semibold block mb-1">Theo ngành hàng</label>
+                  <div class="relative">
+                    <input class="w-full bg-transparent border-none p-0 text-xs font-bold text-right text-white focus:ring-0" id="support-category" placeholder="0" inputmode="numeric" type="text"/>
+                    <span class="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant/40">đ</span>
+                  </div>
+                </div>
+                <div class="bg-surface-container/20 border border-white/5 rounded-xl p-3">
+                  <label class="text-[9px] text-on-surface-variant uppercase font-semibold block mb-1">Hỗ trợ từ AM</label>
+                  <div class="relative">
+                    <input class="w-full bg-transparent border-none p-0 text-xs font-bold text-right text-white focus:ring-0" id="support-am" placeholder="0" inputmode="numeric" type="text"/>
+                    <span class="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant/40">đ</span>
+                  </div>
+                </div>
+                <div class="bg-surface-container/20 border border-white/5 rounded-xl p-3">
+                  <label class="text-[9px] text-on-surface-variant uppercase font-semibold block mb-1">Phương thức TT</label>
+                  <div class="relative">
+                    <input class="w-full bg-transparent border-none p-0 text-xs font-bold text-right text-white focus:ring-0" id="support-payment" placeholder="0" inputmode="numeric" type="text"/>
+                    <span class="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-on-surface-variant/40">đ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW INTAKE SUCCESS STATE -->
+        <div id="new-intake-banner" style="display:none;" class="glass-card p-12 rounded-2xl flex flex-col items-center justify-center text-center gap-6 max-w-xl mx-auto shadow-[0_10px_40px_rgba(16,185,129,0.1)]">
+          <div class="w-16 h-16 rounded-full bg-emerald/10 border border-emerald/30 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            ✅
+          </div>
+          <div>
+            <h3 class="font-outfit text-2xl font-bold text-emerald mb-1">Lưu Giao Dịch Thành Công!</h3>
+            <p class="text-sm text-on-surface-variant">Thiết bị thu mua đã được ghi nhận vào lịch sử hệ thống.</p>
+          </div>
+          <div class="flex gap-3 w-full max-w-sm mt-2">
+            <button class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-white font-semibold text-xs uppercase tracking-wide flex justify-center items-center gap-2" id="btn-new-intake">
+              <span class="material-symbols-outlined text-base">add_circle</span> Nhập Máy Mới
+            </button>
+            <button class="flex-1 py-3 px-4 rounded-xl glass-card text-on-surface font-semibold text-xs uppercase tracking-wide flex justify-center items-center gap-2" id="btn-view-bill-after">
+              <span class="material-symbols-outlined text-base">receipt_long</span> Xem Lại Bill
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           TAB 2: LỊCH SỬ GIAO DỊCH (TRANSACTION HISTORY)
+           ============================================================ -->
+      <div class="tab-pane" style="display:none;" id="tab-history">
+        <!-- Header & Search -->
+        <div class="max-w-[1440px] mx-auto mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div>
+            <h2 class="text-headline-lg font-headline-lg text-on-surface mb-2">Lịch Sử Giao Dịch</h2>
+            <p class="text-body-md font-body-md text-on-surface-variant">Quản lý và xem lại các thiết bị đã thẩm định.</p>
+          </div>
+          <!-- Filters -->
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="relative glass-card rounded-lg flex items-center px-4 py-2 min-w-[280px]">
+              <span class="material-symbols-outlined text-outline mr-2 text-sm">search</span>
+              <input id="filter-model" class="bg-transparent border-none text-body-md font-body-md text-on-surface placeholder:text-outline w-full focus:ring-0 p-0 h-8" placeholder="Tìm ID giao dịch, dòng máy..." type="text">
+            </div>
+            <div class="relative glass-card rounded-lg flex items-center px-4 py-2" style="display:none;">
+              <input id="filter-phone" class="bg-transparent border-none text-body-md font-body-md text-on-surface placeholder:text-outline w-full focus:ring-0 p-0 h-8" type="text">
+            </div>
+            <div class="relative glass-card rounded-lg flex items-center px-4 py-2">
+              <span class="material-symbols-outlined text-outline text-sm mr-2">calendar_today</span>
+              <input id="filter-date" class="bg-transparent border-none text-body-md font-body-md text-on-surface focus:ring-0 p-0 h-8 text-white" type="date">
+            </div>
+            <button id="btn-history-search" class="glass-card bg-primary-container text-on-primary-container hover:bg-primary-container/80 rounded-lg px-4 py-2 flex items-center gap-2 transition-colors">
+              <span class="material-symbols-outlined text-sm">search</span>
+              <span class="text-label-sm font-label-sm">Tìm</span>
+            </button>
+            <button id="btn-history-clear" class="glass-card rounded-lg px-4 py-2 flex items-center gap-2 hover:bg-white/10 transition-colors" title="Đặt lại">
+              <span class="material-symbols-outlined text-sm">restart_alt</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Transactions Grid -->
+        <div id="history-list" class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="loading-state col-span-full flex flex-col items-center justify-center py-16 gap-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span class="text-xs text-on-surface-variant font-medium">Đang tải lịch sử giao dịch...</span>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between pt-4 mt-6 border-t border-white/5 max-w-[1440px] mx-auto" id="history-pagination" style="display:none;">
+          <button id="btn-prev-page" class="p-2 glass-card hover:bg-white/10 rounded-lg text-on-surface-variant hover:text-white disabled:opacity-40 transition-colors">
+            <span class="material-symbols-outlined text-base">chevron_left</span>
+          </button>
+          <span class="text-xs text-on-surface-variant font-medium" id="page-info">Trang 1 / 1</span>
+          <button id="btn-next-page" class="p-2 glass-card hover:bg-white/10 rounded-lg text-on-surface-variant hover:text-white disabled:opacity-40 transition-colors">
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================================================
+       BILL DETAILED VIEW MODAL (RECEIPT MODAL)
+       ============================================================ -->
+  <div class="fixed inset-0 z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300" id="bill-modal">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-md" id="bill-modal-backdrop"></div>
+    <!-- Modal Content -->
+    <div class="glass-card w-full max-w-lg rounded-2xl relative z-10 flex flex-col scale-95 transition-transform duration-300" id="bill-modal-content">
+      <!-- Modal Header -->
+      <div class="px-8 py-6 border-b border-white/10 flex justify-between items-center">
+        <div>
+          <h2 class="text-headline-md font-headline-md text-on-surface">Chi Tiết Giao Dịch</h2>
+          <p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mt-1"><span id="bill-id">TRX-9923</span> • <span id="bill-date">Jan 24, 2024</span></p>
+        </div>
+        <button id="btn-bill-close" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-on-surface-variant hover:text-white hover:bg-white/10 transition-colors">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      </div>
+      <!-- Modal Body (Breakdown) -->
+      <div class="p-8 flex flex-col gap-6" id="bill-print-area">
+        <!-- Device Info -->
+        <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+          <div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-white/10" id="bill-device-type">
+            <span class="material-symbols-outlined text-primary">smartphone</span>
+          </div>
+          <div>
+            <h3 class="text-body-lg font-body-lg text-on-surface font-semibold" id="bill-model">iPhone 14 Pro Max</h3>
+            <p class="text-body-md font-body-md text-on-surface-variant" id="bill-condition">Flawless 100%</p>
+          </div>
+        </div>
+        <!-- Deductions List -->
+        <div class="flex flex-col gap-3" id="bill-deduct-list">
+          <!-- Handled by app.js -->
+        </div>
+        <!-- Total -->
+        <div class="mt-2 pt-4 border-t border-white/20 flex justify-between items-end">
+          <span class="text-body-lg font-body-lg text-on-surface">Giá Trị Cuối Cùng</span>
+          <span class="text-display-price font-display-price text-primary tracking-tight" id="bill-final-price">$850.00</span>
+        </div>
+        
+        <!-- Custom Notes -->
+        <div class="bg-white/5 p-3 rounded-xl mt-3 space-y-1" id="bill-notes-wrap" style="display:none;">
+          <div class="text-[10px] text-on-surface-variant uppercase font-semibold">Ghi chú sự cố linh kiện khác:</div>
+          <p class="text-xs italic text-on-surface" id="bill-notes-text"></p>
+        </div>
+      </div>
+      <!-- Modal Footer (Actions) -->
+      <div class="px-8 py-6 border-t border-white/10 flex gap-4 bg-surface/50 rounded-b-2xl no-print">
+        <button id="btn-bill-edit" class="flex-1 py-3 px-4 rounded-lg glass-card flex items-center justify-center gap-2 text-on-surface hover:bg-white/10 transition-colors font-label-sm text-label-sm uppercase tracking-wide">
+          <span class="material-symbols-outlined text-sm">edit</span>
+          Sửa Lại
+        </button>
+        <button id="btn-bill-print" class="flex-1 py-3 px-4 rounded-lg glass-card flex items-center justify-center gap-2 text-on-surface hover:bg-white/10 transition-colors font-label-sm text-label-sm uppercase tracking-wide">
+          <span class="material-symbols-outlined text-sm">print</span>
+          In Biên Lai
+        </button>
+        <button id="btn-bill-pdf" class="flex-1 py-3 px-4 rounded-lg bg-gradient-to-r from-[#005ac2] to-[#3131c0] flex items-center justify-center gap-2 text-white shadow-[0_0_20px_rgba(0,90,194,0.3)] hover:shadow-[0_0_30px_rgba(0,90,194,0.5)] transition-all font-label-sm text-label-sm uppercase tracking-wide">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Xuất PDF
         </button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ============================================================
-     ADD STAFF MODAL
-     ============================================================ -->
-<div class="modal-overlay" id="add-staff-modal" style="display:none;">
-  <div class="modal-card">
-    <div class="modal-card-header">
-      <h3 id="modal-staff-title"><i class="bi bi-person-plus-fill"></i> Thêm Nhân Viên</h3>
-      <button class="btn-modal-close" id="btn-add-staff-close">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-    <form id="add-staff-form">
-      <div class="form-field">
-        <label>Tên hiển thị</label>
-        <div class="field-input-wrap">
-          <i class="bi bi-person"></i>
-          <input type="text" id="new-staff-name" placeholder="Nguyễn Văn A" required />
-        </div>
+  <!-- ============================================================
+       CONFIRM DIALOG MODAL / BOTTOM SHEET
+       ============================================================ -->
+  <div class="fixed inset-0 z-[110] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 modal-overlay" id="confirm-modal">
+    <!-- Backdrop -->
+    <div class="absolute inset-0" id="confirm-modal-backdrop"></div>
+    <!-- Card content -->
+    <div class="glass-card w-[90%] max-w-sm rounded-2xl relative z-10 flex flex-col p-6 gap-4 text-center scale-95 transition-transform duration-300 shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/10" id="confirm-modal-content">
+      <div class="w-12 h-12 rounded-full bg-coral/10 border border-coral/30 flex items-center justify-center text-2xl text-coral mx-auto shadow-[0_0_15px_rgba(255,107,107,0.15)]" id="confirm-modal-icon">
+        <span class="material-symbols-outlined">warning</span>
       </div>
-      <div class="form-field">
-        <label>Username</label>
-        <div class="field-input-wrap">
-          <i class="bi bi-at"></i>
-          <input type="text" id="new-staff-username" placeholder="nv3" required />
-        </div>
+      <div class="space-y-1">
+        <h3 class="font-outfit text-base font-bold text-on-surface" id="confirm-modal-title">Xác nhận thao tác</h3>
+        <p class="text-xs text-on-surface-variant" id="confirm-modal-msg">Bạn có chắc muốn thực hiện hành động này không?</p>
       </div>
-      <div class="form-field">
-        <label>Mật khẩu</label>
-        <div class="field-input-wrap">
-          <i class="bi bi-lock"></i>
-          <input type="password" id="new-staff-password" placeholder="••••••" />
-        </div>
+      <div class="flex gap-3 mt-2">
+        <button class="flex-1 py-2 px-3 rounded-xl glass-card text-on-surface-variant hover:text-white font-semibold text-xs uppercase tracking-wider" id="btn-confirm-cancel">Hủy</button>
+        <button class="flex-1 py-2 px-3 rounded-xl bg-coral hover:bg-coral/80 text-white font-semibold text-xs uppercase tracking-wider" id="btn-confirm-ok">Đồng Ý</button>
       </div>
-      <div class="form-field">
-        <label>Vai trò</label>
-        <div class="field-input-wrap">
-          <i class="bi bi-shield"></i>
-          <select id="new-staff-role">
-            <option value="staff">Nhân viên</option>
-            <option value="admin">Quản trị viên</option>
-          </select>
-        </div>
-      </div>
-      <div id="add-staff-error" class="login-error" style="display:none;"></div>
-      <button type="submit" class="btn-login" id="btn-save-staff">
-        <span id="btn-save-staff-text">Thêm Nhân Viên</span>
-        <i class="bi bi-check-circle-fill"></i>
-      </button>
-    </form>
-  </div>
-</div>
-
-<!-- ============================================================
-     CONFIRM MODAL / BOTTOM SHEET
-     ============================================================ -->
-<div class="confirm-overlay" id="confirm-modal" style="display:none;">
-  <div class="confirm-card">
-    <div class="confirm-content">
-      <div class="confirm-icon" id="confirm-modal-icon">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-      </div>
-      <h3 id="confirm-modal-title">Xác nhận</h3>
-      <p id="confirm-modal-msg">Bạn có chắc chắn muốn thực hiện hành động này?</p>
-    </div>
-    <div class="confirm-actions">
-      <button class="btn-confirm-cancel" id="btn-confirm-cancel">Hủy</button>
-      <button class="btn-confirm-ok" id="btn-confirm-ok">Đồng Ý</button>
     </div>
   </div>
-</div>
 
-<!-- TOAST NOTIFICATION -->
-<div class="toast-container" id="toast-container"></div>
+  <!-- Toast Notification Wrapper -->
+  <div class="toast-container" id="toast-container"></div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- App JS -->
-<script src="/js/app.js"></script>
+  <!-- ============================================================
+       MOBILE FLOATING BOTTOM DOCK
+       ============================================================ -->
+  <div class="mobile-dock fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] rounded-[28px] px-2 py-1.5 flex items-center gap-0.5" id="mobile-dock">
+    <!-- Home / Nhập Máy -->
+    <button class="dock-item active flex items-center justify-center w-[52px] h-[52px] rounded-full" data-dock-tab="intake" id="dock-intake">
+      <div class="dock-icon w-10 h-10 rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">home</span>
+      </div>
+    </button>
+    <!-- Lịch Sử -->
+    <button class="dock-item flex items-center justify-center w-[52px] h-[52px] rounded-full text-on-surface-variant" data-dock-tab="history" id="dock-history">
+      <div class="dock-icon w-10 h-10 rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined text-[22px]">send</span>
+      </div>
+    </button>
+    <!-- Nhập Mới (Center Accent) -->
+    <button class="dock-item flex items-center justify-center w-[52px] h-[52px] rounded-full" id="dock-new-intake">
+      <div class="dock-center-btn w-10 h-10 rounded-full flex items-center justify-center text-white transition-all">
+        <span class="material-symbols-outlined text-[22px]">add</span>
+      </div>
+    </button>
+    <!-- Dark/Light Mode -->
+    <button class="dock-item flex items-center justify-center w-[52px] h-[52px] rounded-full text-on-surface-variant" id="dock-theme-toggle">
+      <div class="dock-icon w-10 h-10 rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined text-[22px]" id="dock-theme-icon">dark_mode</span>
+      </div>
+    </button>
+    <!-- Profile Avatar -->
+    <button class="dock-item flex items-center justify-center w-[52px] h-[52px] rounded-full text-on-surface-variant">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center ring-2 ring-white/10">
+        <span class="font-outfit text-[10px] font-black text-on-primary">PT</span>
+      </div>
+    </button>
+  </div>
 
-<!-- PWA Service Worker Registration -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(reg => console.log('✅ SW registered'))
-        .catch(err => console.log('SW error:', err));
+  <!-- Application JS Dependencies -->
+  <script src="/js/app.js"></script>
+
+  <!-- PWA Service Worker Registration + Dock Logic -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('✅ SW registered'))
+          .catch(err => console.log('SW error:', err));
+      });
+    }
+
+    // Dynamic dates
+    const formatCurrentDateTime = () => {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      const formatted = now.toLocaleDateString('vi-VN', options);
+      const headerDateTime = document.getElementById('header-datetime');
+      if (headerDateTime) headerDateTime.textContent = `${formatted} • Operator: Admin`;
+    };
+    formatCurrentDateTime();
+    setInterval(formatCurrentDateTime, 60000);
+
+    // Mobile Dock Tab Switching
+    document.querySelectorAll('[data-dock-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.dockTab;
+        // Update dock active states
+        document.querySelectorAll('.dock-item[data-dock-tab]').forEach(d => {
+          d.classList.remove('active');
+          d.classList.add('text-on-surface-variant');
+        });
+        btn.classList.add('active');
+        btn.classList.remove('text-on-surface-variant');
+        // Call the app's switchTab if available
+        if (typeof switchTab === 'function') switchTab(tab);
+      });
     });
-  }
-</script>
 
+    // Dock: New Intake shortcut
+    document.getElementById('dock-new-intake')?.addEventListener('click', () => {
+      if (typeof resetIntake === 'function') resetIntake();
+      if (typeof showStep === 'function') showStep(1);
+      if (typeof switchTab === 'function') switchTab('intake');
+      // Update dock active
+      document.querySelectorAll('.dock-item[data-dock-tab]').forEach(d => {
+        d.classList.remove('active');
+        d.classList.add('text-on-surface-variant');
+      });
+      document.getElementById('dock-intake')?.classList.add('active');
+      document.getElementById('dock-intake')?.classList.remove('text-on-surface-variant');
+    });
+
+    // Dark / Light Mode Toggle
+    const themeIcon = document.getElementById('dock-theme-icon');
+    const desktopThemeIcon = document.getElementById('desktop-theme-icon');
+
+    const updateThemeIcon = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (themeIcon) themeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      if (desktopThemeIcon) desktopThemeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    };
+    updateThemeIcon();
+
+    const toggleTheme = () => {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateThemeIcon();
+    };
+
+    document.getElementById('dock-theme-toggle')?.addEventListener('click', toggleTheme);
+    document.getElementById('desktop-theme-toggle')?.addEventListener('click', toggleTheme);
+
+    // Restore saved theme on load
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+      updateThemeIcon();
+    }
+  </script>
 </body>
 </html>

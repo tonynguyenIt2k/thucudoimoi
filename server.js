@@ -332,16 +332,9 @@ app.use((req, res, next) => {
 // AUTH MIDDLEWARE
 // ============================================================
 function authMiddleware(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Unauthorized' });
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch {
-    return res.status(401).json({ error: 'Token invalid or expired' });
-  }
+  // Bypass auth
+  req.user = { id: 1, username: 'admin', display_name: 'Quản Trị Viên', role: 'admin' };
+  next();
 }
 
 function adminOnly(req, res, next) {
@@ -419,9 +412,9 @@ app.get('/api/get-price', authMiddleware, async (req, res) => {
  * Body: transaction object
  */
 app.post('/api/save', authMiddleware, (req, res) => {
-  const { customer_name, customer_phone, device_type, model, base_price, final_price, condition_percent, detail, notes } = req.body;
+  const { customer_name = 'Khách vãng lai', customer_phone = '0000000000', device_type, model, base_price, final_price, condition_percent, detail, notes } = req.body;
 
-  if (!customer_name || !customer_phone || !device_type || !model || final_price === undefined) {
+  if (!device_type || !model || final_price === undefined) {
     return res.status(400).json({ error: 'Thiếu thông tin bắt buộc' });
   }
 
@@ -510,135 +503,6 @@ app.get('/api/transaction/:id', authMiddleware, (req, res) => {
   res.json({ ...t, detail: JSON.parse(t.detail) });
 });
 
-/**
- * GET /api/stats?date=YYYY-MM-DD
- */
-app.get('/api/stats', authMiddleware, (req, res) => {
-  const date = req.query.date || new Date().toISOString().split('T')[0];
-
-  // Admin sees all, staff sees their own
-  const isAdmin = req.user.role === 'admin';
-  const staffFilter = isAdmin ? '' : 'AND staff_id = ' + req.user.id;
-
-  const todayStats = db.prepare(`
-    SELECT 
-      COUNT(*) as total_count,
-      COALESCE(SUM(final_price), 0) as total_amount,
-      COALESCE(AVG(final_price), 0) as avg_price
-    FROM transactions 
-    WHERE DATE(created_at) = ? ${staffFilter}
-  `).get(date);
-
-  const topStaff = isAdmin ? db.prepare(`
-    SELECT staff_name, COUNT(*) as count, SUM(final_price) as total
-    FROM transactions 
-    WHERE DATE(created_at) = ?
-    GROUP BY staff_id, staff_name
-    ORDER BY count DESC
-    LIMIT 5
-  `).all(date) : [];
-
-  const deviceBreakdown = db.prepare(`
-    SELECT device_type, COUNT(*) as count
-    FROM transactions
-    WHERE DATE(created_at) = ? ${staffFilter}
-    GROUP BY device_type
-    ORDER BY count DESC
-  `).all(date);
-
-  const recentTransactions = db.prepare(`
-    SELECT id, customer_name, model, final_price, staff_name, created_at
-    FROM transactions
-    WHERE DATE(created_at) = ? ${staffFilter}
-    ORDER BY created_at DESC
-    LIMIT 10
-  `).all(date);
-
-  // Weekly trend (last 7 days)
-  const weeklyTrend = db.prepare(`
-    SELECT DATE(created_at) as day, COUNT(*) as count, SUM(final_price) as total
-    FROM transactions
-    WHERE created_at >= DATE('now', '-6 days') ${staffFilter}
-    GROUP BY day
-    ORDER BY day ASC
-  `).all();
-
-  res.json({
-    today: todayStats,
-    top_staff: topStaff,
-    device_breakdown: deviceBreakdown,
-    recent: recentTransactions,
-    weekly_trend: weeklyTrend,
-    date
-  });
-});
-
-/**
- * GET /api/staff (admin only)
- */
-app.get('/api/staff', authMiddleware, adminOnly, (req, res) => {
-  const staff = db.prepare('SELECT id, username, display_name, role, created_at FROM users').all();
-  res.json(staff);
-});
-
-/**
- * POST /api/staff (admin only) - Add new staff
- */
-app.post('/api/staff', authMiddleware, adminOnly, (req, res) => {
-  const { username, password, display_name, role } = req.body;
-  if (!username || !password || !display_name) return res.status(400).json({ error: 'Thiếu thông tin' });
-
-  const hash = bcrypt.hashSync(password, 10);
-  try {
-    const result = db.prepare('INSERT INTO users (username, password, display_name, role) VALUES (?, ?, ?, ?)').run(username, hash, display_name, role || 'staff');
-    res.json({ success: true, id: result.lastInsertRowid });
-  } catch (e) {
-    if (e.message.includes('UNIQUE')) return res.status(400).json({ error: 'Username đã tồn tại' });
-    res.status(500).json({ error: e.message });
-  }
-});
-
-/**
- * PUT /api/staff/:id (admin only)
- */
-app.put('/api/staff/:id', authMiddleware, adminOnly, (req, res) => {
-  const { username, password, display_name, role } = req.body;
-  const userId = req.params.id;
-
-  try {
-    if (password) {
-      const hash = bcrypt.hashSync(password, 10);
-      db.prepare('UPDATE users SET username = ?, password = ?, display_name = ?, role = ? WHERE id = ?')
-        .run(username, hash, display_name, role, userId);
-    } else {
-      db.prepare('UPDATE users SET username = ?, display_name = ?, role = ? WHERE id = ?')
-        .run(username, display_name, role, userId);
-    }
-    res.json({ success: true });
-  } catch (e) {
-    if (e.message.includes('UNIQUE')) return res.status(400).json({ error: 'Username đã tồn tại' });
-    res.status(500).json({ error: e.message });
-  }
-});
-
-/**
- * DELETE /api/staff/:id (admin only)
- */
-app.delete('/api/staff/:id', authMiddleware, adminOnly, (req, res) => {
-  const userId = req.params.id;
-  if (req.user.id == userId) return res.status(400).json({ error: 'Không thể tự xóa chính mình' });
-  
-  try {
-    db.prepare('DELETE FROM users WHERE id = ?').run(userId);
-    res.json({ success: true });
-  } catch (e) {
-    console.error('Delete staff error:', e);
-    if (e.message.includes('FOREIGN KEY')) {
-      return res.status(400).json({ error: 'Nhân viên này đã có giao dịch, không thể xóa để đảm bảo lịch sử dữ liệu.' });
-    }
-    res.status(500).json({ error: 'Lỗi hệ thống: ' + e.message });
-  }
-});
 
 /**
  * DELETE /api/transaction/:id (admin only)

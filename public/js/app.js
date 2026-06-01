@@ -9,21 +9,19 @@
 // STATE
 // ============================================================
 const State = {
-  token: localStorage.getItem('token') || null,
-  user: JSON.parse(localStorage.getItem('user') || 'null'),
+  token: 'dummy',
+  user: { id: 1, username: 'admin', display_name: 'Quản Trị Viên', role: 'admin' },
 
   // Intake form data
   intake: {
-    customerName: '',
-    customerPhone: '',
     deviceType: 'iPhone',
     model: '',
     basePrice: 0,
     prices: { pin: 0, man: 0, camera: 0, vo: 0, sac: 0 },
     priceSource: null,
     conditionPct: 1.0,
-    conditionTier: 'new', // new|good|scratched|broken
-    conditionLabel: 'Đẹp như mới',
+    conditionTier: 'vn_newseal', // vn_newseal|vn_fullbox_90d|good|scratched|dented|bad_but_working
+    conditionLabel: 'VN newseal',
     defects: { man: false, pin: false, vo: false, sac: false },
     cameraDots: 0,
     notes: '',
@@ -123,7 +121,7 @@ async function api(method, url, data = null) {
   
   try {
     const res = await fetch(API_BASE + tsUrl, opts);
-    if (res.status === 401) { logout(); return null; }
+    if (res.status === 401) { return null; }
     
     const contentType = res.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
@@ -228,113 +226,56 @@ el('btn-confirm-ok').addEventListener('click', () => {
 });
 
 // ============================================================
-// AUTH
+// AUTH (Bypassed)
 // ============================================================
-function logout() {
-  State.token = null;
-  State.user = null;
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  showLoginScreen();
+function initApp() {
+  document.body.classList.add('is-admin');
+
 }
 
-function showLoginScreen() {
-  el('login-screen').style.display = '';
-  el('app-screen').style.display = 'none';
-}
-
-function showAppScreen() {
-  el('login-screen').style.display = 'none';
-  el('app-screen').style.display = '';
-  updateUserUI();
-}
-
-function updateUserUI() {
-  const u = State.user;
-  if (!u) return;
-  
-  // Update Bottom Sheet Profile info
-  el('sheet-user-name').textContent = u.display_name;
-  const sheetBadge = el('sheet-user-role');
-  sheetBadge.textContent = u.role === 'admin' ? 'QUẢN TRỊ VIÊN' : 'NHÂN VIÊN';
-  sheetBadge.className = `role-badge ${u.role === 'admin' ? 'admin' : ''}`;
-
-  el('staff-display').value = u.display_name;
-
-  // Apply admin class to body
-  document.body.classList.toggle('is-admin', u.role === 'admin');
-}
-
-function toggleProfileSheet(show) {
-  const overlay = el('profile-sheet-overlay');
-  if (show) {
-    overlay.style.display = 'flex';
-    setTimeout(() => overlay.classList.add('show'), 10);
-  } else {
-    overlay.classList.remove('show');
-    setTimeout(() => overlay.style.display = 'none', 300);
-  }
-}
-
-// Login form
-el('login-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = el('btn-login');
-  const errEl = el('login-error');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;margin:0 auto;"></div>';
-  errEl.style.display = 'none';
-
-  const res = await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      username: el('login-username').value.trim(),
-      password: el('login-password').value,
-    })
-  });
-
-  const data = await res.json();
-
-  if (data.token) {
-    State.token = data.token;
-    State.user = data.user;
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    showAppScreen();
-    loadDashboard();
-  } else {
-    errEl.textContent = data.error || 'Đăng nhập thất bại';
-    errEl.style.display = 'block';
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '<span>Đăng Nhập</span><i class="bi bi-arrow-right-circle-fill"></i>';
-});
-
-el('btn-logout-sheet').addEventListener('click', logout);
-el('nav-profile').addEventListener('click', () => toggleProfileSheet(true));
-el('profile-sheet-overlay').addEventListener('click', (e) => {
-  if (e.target === el('profile-sheet-overlay')) toggleProfileSheet(false);
-});
-
-// ============================================================
-// NAVIGATION
 // ============================================================
 function switchTab(tab) {
   document.querySelectorAll('.tab-pane').forEach(t => t.style.display = 'none');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+  });
 
-  el(`tab-${tab}`).style.display = 'block';
-  el(`nav-${tab}`).classList.add('active');
+  const pane = el(`tab-${tab}`);
+  if (pane) pane.style.display = 'block';
+  
+  const navBtn = el(`nav-${tab}`);
+  if (navBtn) {
+    navBtn.classList.add('active');
+  }
 
-  if (tab === 'history') loadHistory();
-  if (tab === 'dashboard') loadDashboard();
-  if (tab === 'settings') loadStaff();
+  const rightSidebar = el('right-bill-sidebar');
+  const mainContent = el('main-content-area');
+  const isMobile = window.innerWidth < 1024;
+
+  if (tab === 'history') {
+    if (rightSidebar) {
+      rightSidebar.classList.add('lg:hidden');
+      rightSidebar.classList.remove('lg:flex');
+    }
+    if (mainContent) {
+      mainContent.classList.remove('lg:mr-[380px]');
+    }
+    loadHistory();
+  } else {
+    if (rightSidebar) {
+      rightSidebar.classList.remove('lg:hidden');
+      rightSidebar.classList.add('lg:flex');
+    }
+    if (mainContent) {
+      mainContent.classList.add('lg:mr-[380px]');
+    }
+  }
 }
 
 document.querySelectorAll('.nav-item').forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
     const tab = btn.dataset.tab;
     if (tab) switchTab(tab);
   });
@@ -347,20 +288,28 @@ let currentStep = 1;
 
 function showStep(n) {
   [1, 2, 3].forEach(i => {
-    el(`step-${i}`).style.display = i === n ? 'block' : 'none';
+    const stepEl = el(`step-${i}`);
+    if (stepEl) stepEl.style.display = 'block';
     const sp = el(`sp${i}`);
-    sp.classList.toggle('active', i === n);
-    sp.classList.toggle('done', i < n);
+    if (sp) {
+      sp.classList.toggle('active', i === n);
+      sp.classList.toggle('done', i < n);
+    }
   });
-  el('new-intake-banner').style.display = 'none';
+  const banner = el('new-intake-banner');
+  if (banner) banner.style.display = 'none';
+  const mainForm = el('intake-main-form');
+  if (mainForm) mainForm.style.display = 'block';
   currentStep = n;
 }
 
 // Device type selection
 el('device-type-grid').querySelectorAll('.device-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    el('device-type-grid').querySelectorAll('.device-btn').forEach(b => {
+      b.classList.remove('active', 'bg-primary/10', 'text-primary', 'border-primary', 'shadow-[0_0_15px_rgba(77,142,255,0.15)]');
+    });
+    btn.classList.add('active', 'bg-primary/10', 'text-primary', 'border-primary', 'shadow-[0_0_15px_rgba(77,142,255,0.15)]');
     State.intake.deviceType = btn.dataset.type;
     el('model-input').value = '';
     State.intake.model = '';
@@ -373,11 +322,11 @@ el('device-type-grid').querySelectorAll('.device-btn').forEach(btn => {
 function renderQuickModels(type) {
   const models = MODELS[type] || [];
   const chips = models.slice(0, 8).map(m =>
-    `<button class="quick-chip" data-model="${m}">${m}</button>`
+    `<button class="chip py-2 px-3 rounded-xl text-xs font-semibold" data-model="${m}">${m}</button>`
   ).join('');
   el('quick-models').innerHTML = chips;
 
-  el('quick-models').querySelectorAll('.quick-chip').forEach(chip => {
+  el('quick-models').querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       selectModel(chip.dataset.model);
     });
@@ -387,8 +336,12 @@ function renderQuickModels(type) {
 function selectModel(model) {
   el('model-input').value = model;
   State.intake.model = model;
+  el('pr-model').textContent = model;
   el('clear-model').style.display = 'block';
   el('autocomplete-list').style.display = 'none';
+  
+  State.intake.deviceType = document.querySelector('.device-btn.active')?.dataset.type || 'iPhone';
+  fetchPrice(model);
 }
 
 // Autocomplete
@@ -423,6 +376,17 @@ el('model-input').addEventListener('input', (e) => {
   });
 });
 
+// Trigger select on Enter
+el('model-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim();
+    if (val) {
+      selectModel(val);
+    }
+  }
+});
+
 // Close autocomplete on outside click
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#model-input') && !e.target.closest('#autocomplete-list')) {
@@ -438,24 +402,21 @@ el('clear-model').addEventListener('click', () => {
 });
 
 // Step 1 → Next
-el('btn-step1-next').addEventListener('click', () => {
-  const name = el('customer-name').value.trim();
-  const phone = el('customer-phone').value.trim();
+el('btn-step1-next')?.addEventListener('click', () => {
   const model = el('model-input').value.trim();
 
-  if (!name) { showToast('Nhập tên khách hàng!', 'error'); el('customer-name').focus(); return; }
-  if (!phone || !/^0\d{9}$/.test(phone)) { showToast('SĐT không hợp lệ (10 số, bắt đầu 0)', 'error'); el('customer-phone').focus(); return; }
   if (!model) { showToast('Chọn hoặc nhập model máy!', 'error'); el('model-input').focus(); return; }
 
-  State.intake.customerName = name;
-  State.intake.customerPhone = phone;
   State.intake.model = model;
   State.intake.deviceType = document.querySelector('.device-btn.active')?.dataset.type || 'iPhone';
 
   // Update step 2 header
-  el('s2-device-icon').innerHTML = DEVICE_ICONS[State.intake.deviceType];
-  el('s2-model-name').textContent = model;
-  el('s2-device-type').textContent = State.intake.deviceType;
+  const s2Icon = el('s2-device-icon');
+  if (s2Icon) s2Icon.innerHTML = DEVICE_ICONS[State.intake.deviceType];
+  const s2Name = el('s2-model-name');
+  if (s2Name) s2Name.textContent = model;
+  const s2Type = el('s2-device-type');
+  if (s2Type) s2Type.textContent = State.intake.deviceType;
 
   showStep(2);
   fetchPrice(model);
@@ -592,22 +553,27 @@ el('btn-apply-manual').addEventListener('click', () => {
   el('price-error-block').style.display = 'none';
 });
 
-// Format base price input with dots
+// Format base price input with dots & live recalc
 el('base-price').addEventListener('input', (e) => {
   let val = e.target.value.replace(/\D/g, '');
   if (!val) {
     e.target.value = '';
+    State.intake.basePrice = 0;
+    recalcPrice();
     return;
   }
-  e.target.value = parseInt(val, 10).toLocaleString('vi-VN');
+  const parsed = parseInt(val, 10);
+  e.target.value = parsed.toLocaleString('vi-VN');
+  State.intake.basePrice = parsed;
+  recalcPrice();
 });
 
-// Back btn step 1
-el('btn-back-step1').addEventListener('click', () => showStep(1));
-el('btn-back-step1b').addEventListener('click', () => showStep(1));
+// Back btn step 1 (Safe checks)
+el('btn-back-step1')?.addEventListener('click', () => showStep(1));
+el('btn-back-step1b')?.addEventListener('click', () => showStep(1));
 
-// Step 2 → Next
-el('btn-step2-next').addEventListener('click', () => {
+// Step 2 → Next (Safe checks)
+el('btn-step2-next')?.addEventListener('click', () => {
   const rawBase = el('base-price').value.replace(/\D/g, '');
   State.intake.basePrice = parseInt(rawBase || '0', 10);
   if (State.intake.basePrice < 0) { showToast('Giá cơ sở không hợp lệ', 'error'); return; }
@@ -625,7 +591,12 @@ el('btn-step2-next').addEventListener('click', () => {
 
 // Condition tier labels
 const TIER_LABELS = {
-  'new': 'Đẹp như mới', 'good': 'Cũ đẹp', 'scratched': 'Xước cấn', 'broken': 'Xác'
+  'vn_newseal': 'VN newseal', 
+  'vn_fullbox_90d': 'VN fullbox kích hoạt không quá 90 ngày', 
+  'good': 'Giá nhập cũ đẹp', 
+  'scratched': 'Ngoại hình trầy xước',
+  'dented': 'Ngoại hình xước cấn',
+  'bad_but_working': 'Máy hoạt động bình thường, ngoại hình xấu nhưng màn còn hiển thị và cảm ứng được'
 };
 
 // Membership config
@@ -677,7 +648,7 @@ el('member-chips').querySelectorAll('.member-chip').forEach(chip => {
 });
 
 // Trade-in support inputs (recalc on change)
-['support-tradein', 'new-device-price', 'support-category', 'support-am', 'support-payment'].forEach(id => {
+['new-device-price', 'support-category', 'support-am', 'support-payment'].forEach(id => {
   el(id).addEventListener('input', (e) => {
     let val = e.target.value.replace(/\D/g, '');
     if (!val) {
@@ -686,7 +657,6 @@ el('member-chips').querySelectorAll('.member-chip').forEach(chip => {
       e.target.value = parseInt(val, 10).toLocaleString('vi-VN');
     }
     
-    State.intake.supportTradein = parseInt(el('support-tradein').value.replace(/\D/g, '') || '0', 10);
     State.intake.newDevicePrice = parseInt(el('new-device-price').value.replace(/\D/g, '') || '0', 10);
     State.intake.supportCategory = parseInt(el('support-category').value.replace(/\D/g, '') || '0', 10);
     State.intake.supportAM = parseInt(el('support-am').value.replace(/\D/g, '') || '0', 10);
@@ -694,6 +664,33 @@ el('member-chips').querySelectorAll('.member-chip').forEach(chip => {
     recalcPrice();
   });
 });
+
+el('support-tradein-pct').addEventListener('input', (e) => {
+  let val = parseInt(e.target.value.replace(/\D/g, '') || '0', 10);
+  if (val > 100) val = 100;
+  e.target.value = val || '';
+  State.intake.supportTradeinPct = val;
+  recalcPrice();
+});
+
+el('support-tradein-max-input').addEventListener('input', (e) => {
+  let val = e.target.value.replace(/\D/g, '');
+  if (!val) {
+    e.target.value = '';
+  } else {
+    e.target.value = parseInt(val, 10).toLocaleString('vi-VN');
+  }
+  recalcPrice();
+});
+
+document.querySelectorAll('.max-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const val = parseInt(chip.dataset.val, 10);
+    el('support-tradein-max-input').value = val.toLocaleString('vi-VN');
+    recalcPrice();
+  });
+});
+
 
 function updateSacNote() {
   const type = State.intake.deviceType;
@@ -810,10 +807,11 @@ function recalcPrice() {
   // === TRADE-IN SUPPORTS ===
   let supports = [];
 
-  // 1. Trợ giá thu cũ (max 30% of basePrice)
-  const maxTradeinSupport = Math.round(basePrice * 0.3);
-  el('support-tradein-max').textContent = `Tối đa: ${fmt(maxTradeinSupport)}`;
-  let tradeinSupport = Math.min(State.intake.supportTradein || 0, maxTradeinSupport);
+  // 1. Trợ giá thu cũ (tính % trên giá thu cũ cuối cùng, giới hạn bởi mức tối đa)
+  const maxTradeinSupport = parseInt(el('support-tradein-max-input').value.replace(/\D/g, '') || '0', 10);
+  const pct = State.intake.supportTradeinPct || 0;
+  let calculatedSupport = Math.round(baseTradeIn * (pct / 100));
+  let tradeinSupport = Math.min(calculatedSupport, maxTradeinSupport);
   if (tradeinSupport > 0) {
     supports.push({ label: '<i class="bi bi-arrow-repeat"></i> Trợ giá thu cũ', val: tradeinSupport });
   }
@@ -883,6 +881,48 @@ function recalcPrice() {
 }
 
 // ============================================================
+// COPY BILL TO CLIPBOARD
+// ============================================================
+el('btn-copy-bill').addEventListener('click', async () => {
+  const s = State.intake;
+  if (!s.finalPrice && s.finalPrice !== 0) {
+    showToast('Cần tính giá trước!', 'error');
+    return;
+  }
+
+  const calc = recalcPrice();
+  
+  // Format requested: XC (giá máy) - thaypin(giá thay)-1 đốm cam(500) = Tổng thu
+  const toNumStr = val => (val / 1000).toString();
+  
+  let parts = [];
+  
+  // 1. Condition & Base Price
+  let conditionLabel = s.conditionLabel || 'N/A';
+  let basePriceStr = s.basePrice ? toNumStr(s.basePrice) : '0';
+  parts.push(`${conditionLabel} (${basePriceStr})`);
+  
+  // 2. Deducts
+  if (calc.deducts && calc.deducts.length > 0) {
+    calc.deducts.forEach(d => {
+      let label = d.label.replace(/<[^>]*>/g, '').trim(); // Remove HTML like <i> tags
+      parts.push(`- ${label}(${toNumStr(d.val)})`);
+    });
+  }
+  
+  // 3. Final
+  let finalStr = s.finalPrice ? toNumStr(s.finalPrice) : '0';
+  let copyStr = parts.join(' ') + ` = ${finalStr}`;
+  
+  try {
+    await navigator.clipboard.writeText(copyStr);
+    showToast('Đã sao chép: ' + copyStr, 'success');
+  } catch(e) {
+    showToast('Lỗi khi sao chép!', 'error');
+  }
+});
+
+// ============================================================
 // CONFIRM TRANSACTION
 // ============================================================
 el('btn-confirm').addEventListener('click', async () => {
@@ -914,9 +954,7 @@ el('btn-confirm').addEventListener('click', async () => {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;"></div>';
 
-  const res = await api('POST', '/api/save', {
-    customer_name: s.customerName,
-    customer_phone: s.customerPhone,
+  const data = {
     device_type: s.deviceType,
     model: s.model,
     base_price: s.basePrice,
@@ -924,7 +962,9 @@ el('btn-confirm').addEventListener('click', async () => {
     condition_percent: s.conditionPct,
     detail: detailData,
     notes: el('notes-input').value.trim(),
-  });
+  };
+
+  const res = await api('POST', '/api/save', data);
 
   btn.disabled = false;
   btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> CHỐT KHÁCH';
@@ -938,8 +978,10 @@ el('btn-confirm').addEventListener('click', async () => {
   showToast('Đã lưu giao dịch thành công!', 'success');
 
   // Show success state
-  [1, 2, 3].forEach(i => el(`step-${i}`).style.display = 'none');
-  el('new-intake-banner').style.display = 'block';
+  const mainForm = el('intake-main-form');
+  if (mainForm) mainForm.style.display = 'none';
+  const banner = el('new-intake-banner');
+  if (banner) banner.style.display = 'flex';
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'done'));
 });
 
@@ -956,21 +998,17 @@ el('btn-view-bill-after').addEventListener('click', () => {
 
 function resetIntake() {
   State.intake = {
-    customerName: '', customerPhone: '',
     deviceType: document.querySelector('.device-btn.active')?.dataset.type || 'iPhone',
     model: '', basePrice: 0,
     prices: { pin: 0, man: 0, camera: 0, vo: 0, sac: 0 },
     priceSource: null, conditionPct: 1.0,
-    conditionTier: 'new', conditionLabel: 'Đẹp như mới',
+    conditionTier: 'vn_newseal', conditionLabel: 'VN newseal',
     defects: { man: false, pin: false, vo: false, sac: false },
     cameraDots: 0, notes: '', finalPrice: 0,
     memberTier: 'none', newDevicePrice: 0,
     supportTradein: 0, supportCategory: 0, supportAM: 0, supportPayment: 0,
   };
-  sessionStorage.removeItem('draftCustomerName');
-  sessionStorage.removeItem('draftCustomerPhone');
-  el('customer-name').value = '';
-  el('customer-phone').value = '';
+  // reset ui
   el('model-input').value = '';
   el('base-price').value = '';
   el('notes-input').value = '';
@@ -987,7 +1025,8 @@ function resetIntake() {
   ['man', 'pin', 'vo', 'sac'].forEach(k => { el(`cb-${k}`).checked = false; });
 
   // Reset support inputs
-  el('support-tradein').value = '';
+  const tradeinPct = el('support-tradein-pct');
+  if (tradeinPct) tradeinPct.value = '';
   el('new-device-price').value = '';
   el('support-category').value = '';
   el('support-am').value = '';
@@ -995,15 +1034,15 @@ function resetIntake() {
 
   el('pb-final').textContent = '0đ';
   el('pb-base').textContent = '0đ';
-  el('pb-condition-pct').textContent = 'Đẹp như mới';
+  el('pb-condition-pct').textContent = 'VN newseal';
   el('pb-condition-val').textContent = '0đ';
   el('pb-deducts').innerHTML = '';
   el('pb-supports').style.display = 'none';
   el('pb-newdevice-row').style.display = 'none';
 }
 
-// Step 3 back
-el('btn-back-step2').addEventListener('click', () => showStep(2));
+// Step 3 back (Safe checks)
+el('btn-back-step2')?.addEventListener('click', () => showStep(2));
 
 // ============================================================
 // BILL MODAL
@@ -1011,11 +1050,9 @@ el('btn-back-step2').addEventListener('click', () => showStep(2));
 function showBill(t) {
   const detail = typeof t.detail === 'string' ? JSON.parse(t.detail) : t.detail;
 
-  el('bill-id').textContent = `#${String(t.id).padStart(4, '0')}`;
+  el('bill-id').textContent = '#' + t.id.toString().padStart(4, '0');
   el('bill-date').textContent = fmtDate(t.created_at);
   el('bill-staff').textContent = t.staff_name;
-  el('bill-customer-name').textContent = t.customer_name;
-  el('bill-customer-phone').textContent = t.customer_phone;
   el('bill-device-type').innerHTML = `${DEVICE_ICONS[t.device_type] || ''} ${t.device_type}`;
   el('bill-model').textContent = t.model;
   el('bill-condition').textContent = `${Math.round((detail.conditionPct || 1) * 100)}%`;
@@ -1067,26 +1104,41 @@ function showBill(t) {
     el('bill-notes-wrap').style.display = 'none';
   }
 
-  el('bill-modal').style.display = 'flex';
+  const modal = el('bill-modal');
+  const modalContent = el('bill-modal-content');
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  if (modalContent) {
+    modalContent.classList.remove('scale-95');
+    modalContent.classList.add('scale-100');
+  }
 }
 
-el('btn-bill-close').addEventListener('click', () => el('bill-modal').style.display = 'none');
-el('bill-modal').addEventListener('click', (e) => {
-  if (e.target === el('bill-modal')) el('bill-modal').style.display = 'none';
+function closeBillModal() {
+  const modal = el('bill-modal');
+  const modalContent = el('bill-modal-content');
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  if (modalContent) {
+    modalContent.classList.remove('scale-100');
+    modalContent.classList.add('scale-95');
+  }
+}
+
+el('btn-bill-close')?.addEventListener('click', closeBillModal);
+el('bill-modal')?.addEventListener('click', (e) => {
+  if (e.target === el('bill-modal') || e.target === el('bill-modal-backdrop')) closeBillModal();
 });
 
-el('btn-bill-print').addEventListener('click', () => window.print());
+el('btn-bill-print')?.addEventListener('click', () => window.print());
 
-el('btn-bill-pdf').addEventListener('click', () => {
-  // Simple approach: open print dialog with PDF option
+el('btn-bill-pdf')?.addEventListener('click', () => {
   const originalTitle = document.title;
   document.title = `Bill_${el('bill-id').textContent}_${el('bill-model').textContent}`;
   window.print();
   document.title = originalTitle;
 });
 
-el('btn-bill-edit').addEventListener('click', () => {
-  el('bill-modal').style.display = 'none';
+el('btn-bill-edit')?.addEventListener('click', () => {
+  closeBillModal();
   el('new-intake-banner').style.display = 'none';
   showStep(3);
   showToast('Điều chỉnh rồi bấm CHỐT KHÁCH lại', 'info');
@@ -1117,22 +1169,54 @@ async function loadHistory(page = 1) {
     return;
   }
 
-  el('history-list').innerHTML = data.transactions.map(t => `
-    <div class="history-item" data-id="${t.id}">
-      <div class="history-device-icon">${DEVICE_ICONS[t.device_type] || '<i class="bi bi-phone"></i>'}</div>
-      <div class="history-info">
-        <div class="history-model">${t.model}</div>
-        <div class="history-customer"><i class="bi bi-person-fill"></i> ${t.customer_name} · <i class="bi bi-telephone-fill"></i> ${t.customer_phone}</div>
-        <div class="history-meta">
-          <span><i class="bi bi-person-badge-fill"></i> ${t.staff_name}</span>
+  el('history-list').innerHTML = data.transactions.map(t => {
+    let detail = {};
+    try { detail = typeof t.detail === 'string' ? JSON.parse(t.detail) : t.detail; } catch(e){}
+    const condLabel = detail?.conditionLabel || 'Bình thường';
+    const pct = detail?.conditionPct || 1;
+    
+    let statusClass = 'bg-primary/10 border-primary/20 text-primary';
+    let dotClass = 'bg-primary shadow-[0_0_8px_rgba(173,198,255,0.8)]';
+    let statusText = 'Khá / Tốt';
+    
+    if (pct >= 0.98) {
+      statusClass = 'bg-tertiary/10 border-tertiary/20 text-tertiary';
+      dotClass = 'bg-tertiary shadow-[0_0_8px_rgba(78,222,163,0.8)]';
+      statusText = 'Hoàn Hảo';
+    } else if (pct <= 0.95) {
+      statusClass = 'bg-[#ffb4ab]/10 border-[#ffb4ab]/20 text-[#ffb4ab]';
+      dotClass = 'bg-[#ffb4ab] shadow-[0_0_8px_rgba(255,180,171,0.8)]';
+      statusText = 'Hư Hỏng Nhẹ';
+    }
+
+    return `
+    <div class="glass-card rounded-xl p-6 flex flex-col gap-5 hover:border-white/20 hover:shadow-[0_0_30px_rgba(173,198,255,0.05)] transition-all cursor-pointer group history-item" data-id="${t.id}">
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-1">TRX-${t.id.toString().padStart(4, '0')}</div>
+          <div class="text-body-md font-body-md text-outline">${fmtDate(t.created_at)}</div>
+        </div>
+        <div class="px-3 py-1 rounded-full ${statusClass} border flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
+          <span class="text-[10px] font-label-sm uppercase tracking-wide">${statusText}</span>
         </div>
       </div>
-      <div class="history-price">
-        <div class="history-price-val">${fmt(t.final_price)}</div>
-        <div class="history-price-time">${fmtDate(t.created_at)}</div>
+      <div>
+        <h3 class="text-lg font-headline-md font-semibold text-on-surface mb-1">${t.model}</h3>
+        <p class="text-xs font-body-md text-on-surface-variant">${t.device_type} • ${condLabel}</p>
+      </div>
+      <div class="mt-auto pt-4 border-t border-white/5 flex items-end justify-between">
+        <div>
+          <div class="text-[10px] font-label-sm text-outline mb-1 uppercase tracking-wider">Giá Trị Cuối</div>
+          <div class="text-xl font-headline-md font-bold text-primary">${fmt(t.final_price)}</div>
+        </div>
+        <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
+          <span class="material-symbols-outlined text-base">receipt_long</span>
+        </button>
       </div>
     </div>
-  `).join('');
+    `;
+  }).join('');
 
   el('history-list').querySelectorAll('.history-item').forEach(item => {
     item.addEventListener('click', async () => {
@@ -1173,201 +1257,9 @@ el('btn-prev-page').addEventListener('click', () => loadHistory(State.historyPag
 el('btn-next-page').addEventListener('click', () => loadHistory(State.historyPage + 1));
 
 // ============================================================
-// MODULE 5: DASHBOARD
-// ============================================================
-el('dash-date').value = today();
-
-el('dash-date').addEventListener('change', loadDashboard);
-
-async function loadDashboard() {
-  const date = el('dash-date').value || today();
-  el('stat-count').textContent = '...';
-  el('stat-total').textContent = '...';
-  el('stat-avg').textContent = '...';
-
-  const data = await api('GET', `/api/stats?date=${date}`);
-  if (!data) return;
-
-  el('stat-count').textContent = data.today.total_count;
-  el('stat-total').textContent = fmtShort(data.today.total_amount);
-  el('stat-avg').textContent = fmtShort(data.today.avg_price);
-
-  // Top staff (admin)
-  if (State.user?.role === 'admin' && data.top_staff.length) {
-    el('top-staff-list').innerHTML = data.top_staff.map((s, i) => {
-      const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
-      const rankIcon = i === 0 ? '<i class="bi bi-trophy-fill" style="color:#FFD700"></i>' : i === 1 ? '<i class="bi bi-trophy-fill" style="color:#C0C0C0"></i>' : i === 2 ? '<i class="bi bi-trophy-fill" style="color:#CD7F32"></i>' : `<span style="font-size:0.8rem;opacity:0.5">#${i + 1}</span>`;
-      return `<div class="top-staff-item">
-        <div class="staff-rank ${rankClass}">${rankIcon}</div>
-        <div class="staff-item-info">
-          <div class="staff-item-name">${s.staff_name}</div>
-          <div class="staff-item-sub">${s.count} máy</div>
-        </div>
-        <div class="staff-item-total">${fmtShort(s.total)}</div>
-      </div>`;
-    }).join('');
-  } else if (State.user?.role === 'admin') {
-    el('top-staff-list').innerHTML = '<div class="empty-state"><p>Chưa có dữ liệu hôm nay</p></div>';
-  }
-
-  // Device breakdown
-  if (data.device_breakdown.length) {
-    const maxCount = Math.max(...data.device_breakdown.map(d => d.count));
-    el('device-breakdown').innerHTML = data.device_breakdown.map(d => `
-      <div class="device-breakdown-item">
-        <span class="db-icon">${DEVICE_ICONS[d.device_type] || '<i class="bi bi-phone"></i>'}</span>
-        <span class="db-type">${d.device_type}</span>
-        <div class="db-bar-wrap"><div class="db-bar" style="width:${Math.round(d.count / maxCount * 100)}%"></div></div>
-        <span class="db-count">${d.count}</span>
-      </div>
-    `).join('');
-  } else {
-    el('device-breakdown').innerHTML = '<div class="empty-state"><p>Chưa có dữ liệu</p></div>';
-  }
-
-  // Recent transactions
-  if (data.recent.length) {
-    el('dash-recent').innerHTML = data.recent.map(t => `
-      <div class="history-item">
-        <div class="history-device-icon">${DEVICE_ICONS[t.device_type] || '<i class="bi bi-phone"></i>'}</div>
-        <div class="history-info">
-          <div class="history-model">${t.model}</div>
-          <div class="history-customer"><i class="bi bi-person-fill"></i> ${t.customer_name}</div>
-        </div>
-        <div class="history-price">
-          <div class="history-price-val">${fmt(t.final_price)}</div>
-          <div class="history-price-time">${fmtDate(t.created_at)}</div>
-        </div>
-      </div>
-    `).join('');
-  } else {
-    el('dash-recent').innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="bi bi-bar-chart-fill"></i></div><p>Chưa có giao dịch hôm nay</p></div>';
-  }
-}
-
-// ============================================================
-// MODULE 6: STAFF MANAGEMENT (Admin)
-// ============================================================
-let editingStaffId = null;
-
-async function loadStaff() {
-  el('staff-list').innerHTML = '<div class="loading-state"><div class="spinner"></div></div>';
-  const data = await api('GET', '/api/staff');
-  if (!data) return;
-
-  el('staff-list').innerHTML = data.map(s => {
-    const initials = s.display_name.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
-    return `<div class="staff-item">
-      <div class="staff-avatar">${initials}</div>
-      <div class="staff-item-info">
-        <div class="staff-item-name">${s.display_name}</div>
-        <div class="staff-item-username">@${s.username}</div>
-      </div>
-      <div class="staff-item-actions">
-        <span class="staff-role-badge ${s.role === 'admin' ? 'staff-role-admin' : 'staff-role-staff'}">
-          ${s.role === 'admin' ? 'ADMIN' : 'NV'}
-        </span>
-        <button class="btn-staff-action btn-edit" onclick="editStaff(${s.id})"><i class="bi bi-pencil"></i></button>
-        <button class="btn-staff-action btn-delete" onclick="deleteStaff(${s.id})"><i class="bi bi-trash"></i></button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-window.editStaff = async function(id) {
-  editingStaffId = id;
-  const data = await api('GET', '/api/staff');
-  const s = data.find(u => u.id == id);
-  if (!s) return;
-
-  el('add-staff-modal').style.display = 'flex';
-  el('modal-staff-title').innerHTML = '<i class="bi bi-pencil-fill"></i> Sửa Nhân Viên';
-  el('btn-save-staff-text').textContent = 'Lưu Thay Đổi';
-  
-  el('new-staff-name').value = s.display_name;
-  el('new-staff-username').value = s.username;
-  el('new-staff-password').value = '';
-  el('new-staff-role').value = s.role;
-};
-
-window.deleteStaff = function(id) {
-  if (id === State.user.id) {
-    showToast('Không thể tự xóa chính mình', 'error');
-    return;
-  }
-  
-  showConfirm('Xóa nhân viên?', 'Bạn có chắc chắn muốn xóa nhân viên này? Hành động này không thể hoàn tác.', async () => {
-    const res = await api('DELETE', `/api/staff/${id}`);
-    if (res && res.success) {
-      showToast('Đã xóa nhân viên thành công', 'success');
-      loadStaff();
-    } else {
-      showToast(res?.error || 'Lỗi khi xóa nhân viên', 'error');
-    }
-  });
-};
-
-el('btn-add-staff').addEventListener('click', () => {
-  editingStaffId = null;
-  el('add-staff-modal').style.display = 'flex';
-  el('modal-staff-title').innerHTML = '<i class="bi bi-person-plus-fill"></i> Thêm Nhân Viên';
-  el('btn-save-staff-text').textContent = 'Thêm Nhân Viên';
-  el('add-staff-form').reset();
-  el('add-staff-error').style.display = 'none';
-});
-
-el('btn-add-staff-close').addEventListener('click', () => {
-  el('add-staff-modal').style.display = 'none';
-});
-
-el('add-staff-modal').addEventListener('click', (e) => {
-  if (e.target === el('add-staff-modal')) el('add-staff-modal').style.display = 'none';
-});
-
-el('add-staff-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const errEl = el('add-staff-error');
-  errEl.style.display = 'none';
-
-  const payload = {
-    display_name: el('new-staff-name').value.trim(),
-    username: el('new-staff-username').value.trim(),
-    role: el('new-staff-role').value,
-  };
-  
-  const password = el('new-staff-password').value;
-  if (password) payload.password = password;
-
-  const method = editingStaffId ? 'PUT' : 'POST';
-  const url = editingStaffId ? `/api/staff/${editingStaffId}` : '/api/staff';
-
-  const res = await api(method, url, payload);
-
-  if (!res || !res.success) {
-    errEl.textContent = (res && res.error) || 'Lỗi xử lý nhân viên';
-    errEl.style.display = 'block';
-  } else {
-    el('add-staff-modal').style.display = 'none';
-    el('add-staff-form').reset();
-    showToast(editingStaffId ? 'Đã cập nhật nhân viên thành công' : 'Đã thêm nhân viên thành công', 'success');
-    loadStaff();
-  }
-});
-
-// ============================================================
 // INIT
 // ============================================================
 function init() {
-  // Restore draft customer info
-  const draftName = sessionStorage.getItem('draftCustomerName');
-  const draftPhone = sessionStorage.getItem('draftCustomerPhone');
-  if (draftName) el('customer-name').value = draftName;
-  if (draftPhone) el('customer-phone').value = draftPhone;
-
-  // Save drafts on input
-  el('customer-name').addEventListener('input', (e) => sessionStorage.setItem('draftCustomerName', e.target.value));
-  el('customer-phone').addEventListener('input', (e) => sessionStorage.setItem('draftCustomerPhone', e.target.value));
-
   // Theme init
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) {
@@ -1386,18 +1278,14 @@ function init() {
     localStorage.setItem('theme', newTheme);
   });
 
-  if (State.token && State.user) {
-    showAppScreen();
-    loadDashboard();
-  } else {
-    showLoginScreen();
-  }
+  initApp();
 
   // Init quick models for default device
   renderQuickModels('iPhone');
 
   // Set today's date
-  el('dash-date').value = today();
+  const dashDate = el('dash-date');
+  if (dashDate) dashDate.value = today();
 }
 
 init();

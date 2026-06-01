@@ -3,7 +3,7 @@
  * Caches UI shell + API responses for offline use
  */
 
-const CACHE_VERSION = 'v4.2';
+const CACHE_VERSION = 'v5.11';
 const SHELL_CACHE = `shell-${CACHE_VERSION}`;
 const API_CACHE = `api-${CACHE_VERSION}`;
 

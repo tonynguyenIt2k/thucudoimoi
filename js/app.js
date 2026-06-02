@@ -426,7 +426,7 @@ function extractAllPrices(html) {
 
 async function fetchServicePrice(url, slug) {
   try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`;
     const resp = await fetch(proxyUrl);
     if (!resp.ok) return { min: 0, max: 0, minName: '', maxName: '' };
     
@@ -501,22 +501,18 @@ async function scrapeDTVPriceClient(keyword) {
   const useMax = { man: true };
   const result = { pin: 0, man: 0, camera: 0, vo: 0, sac: 0 };
   const names = { pin: '', man: '', camera: '', vo: '', sac: '' };
-  const fetchTasks = [];
-
-  for (const [service, urls] of Object.entries(serviceUrls)) {
+  const fetchTasks = Object.entries(serviceUrls).map(async ([service, urls]) => {
     for (const url of urls) {
-      fetchTasks.push(
-        fetchServicePrice(url, slug).then(({ min, max, minName, maxName }) => {
-          const price = useMax[service] ? max : min;
-          const name = useMax[service] ? maxName : minName;
-          if (price > 0 && (result[service] === 0 || (useMax[service] ? price > result[service] : price < result[service]))) {
-            result[service] = price;
-            names[service] = name || '';
-          }
-        })
-      );
+      const { min, max, minName, maxName } = await fetchServicePrice(url, slug);
+      const price = useMax[service] ? max : min;
+      const name = useMax[service] ? maxName : minName;
+      if (price > 0) {
+        result[service] = price;
+        names[service] = name || '';
+        break;
+      }
     }
-  }
+  });
 
   await Promise.all(fetchTasks);
   const hasAnyPrice = Object.values(result).some(v => v > 0);

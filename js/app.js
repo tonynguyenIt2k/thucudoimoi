@@ -108,31 +108,7 @@ const DEVICE_ICONS = {
 // ============================================================
 const API_BASE = '';
 
-async function api(method, url, data = null) {
-  const tsUrl = url.includes('?') ? `${url}&t=${Date.now()}` : `${url}?t=${Date.now()}`;
-  console.log(`[API Call] ${method} ${tsUrl}`);
-  
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
-  if (State.token) opts.headers['Authorization'] = `Bearer ${State.token}`;
-  if (data) opts.body = JSON.stringify(data);
-  
-  try {
-    const res = await fetch(API_BASE + tsUrl, opts);
-    if (res.status === 401) { return null; }
-    
-    const contentType = res.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-      return await res.json();
-    }
-    return { success: false, error: `Lỗi máy chủ (${res.status}) - Không tìm thấy: ${url}` };
-  } catch (err) {
-    console.error('API Error:', err);
-    return { success: false, error: `Lỗi kết nối: ${url}` };
-  }
-}
+
 
 function fmt(num) {
   if (!num && num !== 0) return '—';
@@ -423,6 +399,144 @@ el('btn-step1-next')?.addEventListener('click', () => {
 });
 
 // ============================================================
+// CLIENT-SIDE SCRAPER
+// ============================================================
+function toSlug(keyword) {
+  return keyword
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+}
+
+function extractAllPrices(html) {
+  if (!html) return [];
+  const priceRegex = /(?<![\d.])(\d{1,3}(?:\.\d{3})+)₫/g;
+  const prices = [];
+  let match;
+  while ((match = priceRegex.exec(html)) !== null) {
+    const num = parseInt(match[1].replace(/\./g, ''), 10);
+    if (num >= 500000 && num <= 100000000) prices.push(num);
+  }
+  return prices.sort((a, b) => a - b);
+}
+
+async function fetchServicePrice(url, slug) {
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) return { min: 0, max: 0, minName: '', maxName: '' };
+    
+    const html = await resp.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const products = [];
+    
+    doc.querySelectorAll('a[href]').forEach(el => {
+      const href = el.getAttribute('href') || '';
+      const htmlInside = el.innerHTML || '';
+      const priceMatches = htmlInside.match(/(?<![\d.])(\d{1,3}(?:\.\d{3})+)₫/g);
+      
+      if (priceMatches && (href.includes(`/${slug}`) || href.includes('/thay-'))) {
+        const firstPrice = priceMatches[0];
+        const price = parseInt(firstPrice.replace(/[.₫]/g, ''), 10);
+        if (price >= 500000 && price <= 100000000) {
+          const text = el.textContent.trim();
+          let name = text.split(firstPrice)[0]
+            .replace(/Giảm \d+%\s*/g, '')
+            .replace(/\d+\s*-?\s*\d*\s*[Pp]hút/g, '')
+            .replace(/\d+\s*tháng/g, '')
+            .replace(/\d+\s*giờ/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          const brandMatch = name.match(/chính hãng\s+(.+)/i);
+          if (brandMatch) name = brandMatch[1].trim();
+          products.push({ name, price });
+        }
+      }
+    });
+
+    if (products.length === 0) {
+      const fallbackPrices = extractAllPrices(html);
+      if (fallbackPrices.length > 0) {
+        products.push({ name: '', price: fallbackPrices[0] });
+        if (fallbackPrices.length > 1) {
+          products.push({ name: '', price: fallbackPrices[fallbackPrices.length - 1] });
+        }
+      }
+    }
+
+    if (products.length === 0) return { min: 0, max: 0, minName: '', maxName: '' };
+
+    products.sort((a, b) => a.price - b.price);
+    const minP = products[0];
+    const maxP = products[products.length - 1];
+
+    return {
+      min: minP.price,
+      max: maxP.price,
+      minName: minP.name,
+      maxName: maxP.name,
+    };
+  } catch (err) {
+    return { min: 0, max: 0, minName: '', maxName: '' };
+  }
+}
+
+async function scrapeDTVPriceClient(keyword) {
+  const slug = toSlug(keyword);
+  const BASE = 'https://dienthoaivui.com.vn';
+
+  const serviceUrls = {
+    pin: [`${BASE}/thay-pin-${slug}`],
+    man: [`${BASE}/thay-man-hinh-${slug}`],
+    camera: [`${BASE}/thay-camera-sau-${slug}`, `${BASE}/thay-camera-${slug}`],
+    vo: [`${BASE}/thay-vo-${slug}`, `${BASE}/thay-vo-may-${slug}`],
+    sac: [`${BASE}/thay-chan-sac-${slug}`, `${BASE}/thay-sac-${slug}`],
+  };
+
+  const useMax = { man: true };
+  const result = { pin: 0, man: 0, camera: 0, vo: 0, sac: 0 };
+  const names = { pin: '', man: '', camera: '', vo: '', sac: '' };
+  const fetchTasks = [];
+
+  for (const [service, urls] of Object.entries(serviceUrls)) {
+    for (const url of urls) {
+      fetchTasks.push(
+        fetchServicePrice(url, slug).then(({ min, max, minName, maxName }) => {
+          const price = useMax[service] ? max : min;
+          const name = useMax[service] ? maxName : minName;
+          if (price > 0 && (result[service] === 0 || (useMax[service] ? price > result[service] : price < result[service]))) {
+            result[service] = price;
+            names[service] = name || '';
+          }
+        })
+      );
+    }
+  }
+
+  await Promise.all(fetchTasks);
+  const hasAnyPrice = Object.values(result).some(v => v > 0);
+
+  if (!hasAnyPrice) return { error: 'Không tìm thấy giá cho model này' };
+
+  return {
+    ...result,
+    pin_name: names.pin,
+    man_name: names.man,
+    camera_name: names.camera,
+    vo_name: names.vo,
+    sac_name: names.sac,
+    source: 'Điện Thoại Vui',
+    model_found: keyword,
+    url: `${BASE}/thay-pin-${slug}`,
+  };
+}
+
+// ============================================================
 // MODULE 2: PRICE FETCHING
 // ============================================================
 let priceLoadingTimeout;
@@ -433,11 +547,11 @@ async function fetchPrice(keyword) {
   el('price-error-block').style.display = 'none';
 
   priceLoadingTimeout = setTimeout(() => {
-    el('price-loading').querySelector('span').textContent = 'Đang xử lý...';
+    el('price-loading').querySelector('span').textContent = 'Đang lấy dữ liệu qua Proxy...';
   }, 3000);
 
   try {
-    const data = await api('GET', `/api/get-price?keyword=${encodeURIComponent(keyword)}`);
+    const data = await scrapeDTVPriceClient(keyword);
     clearTimeout(priceLoadingTimeout);
     el('price-loading').style.display = 'none';
 
@@ -964,7 +1078,57 @@ el('btn-confirm').addEventListener('click', async () => {
     notes: el('notes-input').value.trim(),
   };
 
-  const res = await api('POST', '/api/save', data);
+// ============================================================
+// CLIENT-SIDE LOCAL STORAGE (NO DATABASE)
+// ============================================================
+function getLocalTransactions() {
+  const data = localStorage.getItem('pt_transactions');
+  return data ? JSON.parse(data) : [];
+}
+
+function saveTransactionClient(data) {
+  const txs = getLocalTransactions();
+  const tx = {
+    id: Date.now(),
+    customer_name: data.customer_name,
+    customer_phone: data.customer_phone,
+    staff_name: data.staff_name || 'Nhân viên',
+    device_type: data.device_type,
+    model: data.model,
+    base_price: data.base_price,
+    final_price: data.final_price,
+    condition_percent: data.condition_percent,
+    detail: data.detail,
+    notes: data.notes,
+    created_at: new Date().toISOString()
+  };
+  txs.unshift(tx);
+  localStorage.setItem('pt_transactions', JSON.stringify(txs));
+  return { success: true, transaction: tx };
+}
+
+function getHistoryClient(page, limit, filters) {
+  let txs = getLocalTransactions();
+  if (filters.phone) txs = txs.filter(t => t.customer_phone.includes(filters.phone));
+  if (filters.model) txs = txs.filter(t => t.model.toLowerCase().includes(filters.model.toLowerCase()));
+  if (filters.date) {
+    txs = txs.filter(t => t.created_at.startsWith(filters.date));
+  }
+  
+  const total = txs.length;
+  const pages = Math.ceil(total / limit) || 1;
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  
+  return {
+    transactions: txs.slice(start, end),
+    page,
+    pages,
+    total
+  };
+}
+
+  const res = saveTransactionClient(data);
 
   btn.disabled = false;
   btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> CHỐT KHÁCH';
@@ -1160,7 +1324,7 @@ async function loadHistory(page = 1) {
     ...(f.date ? { date: f.date } : {}),
   });
 
-  const data = await api('GET', `/api/history?${params}`);
+  const data = getHistoryClient(page, 15, f);
   if (!data) return;
 
   if (!data.transactions.length) {
